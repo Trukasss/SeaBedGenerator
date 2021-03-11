@@ -17,13 +17,13 @@ reload(RepartitionCode)
 
 cmds.file(f=True, new=True)
 
-# __________________ définition de variables globales _______________________
-count = 0 #nombre de fois où on clique sur "create shoal"
+# __________________ dï¿½finition de variables globales _______________________
+count = 0 #nombre de fois oï¿½ on clique sur "create shoal"
 
 #J'ai rentre le chemin d'acces dans une variable string. Maintenant il suffit de changer l'endroit qu'une seule fois.
-path = "C:/Users/Administrateur/Desktop/Cours/Python/Projet/Vignettes/"
+path = cmds.internalVar(usd=True)+"SeaBedGenerator/Vignettes/"
 
-pathImport= 'C:/Users/Administrateur/Desktop/Cours/Python/Projet/Models/' #chemins jusqu'au FBX #cmds.internalVar(upd=True)
+pathImport= cmds.internalVar(usd=True)+"SeaBedGenerator/Models/" #chemins jusqu'au FBX
 #print(path) #C:/Users/Administrateur/Documents/maya/2018/prefs/
 
 #__________imports_________   #mettre les bons chemins  
@@ -44,7 +44,7 @@ def choixCoraux():
         setImport("CorailPhone_triple.fbx")
         
         
-# __________________________ FONCTIONS pour importer éléments + appeler la répartition des éléments __________________________________
+# __________________________ FONCTIONS pour importer ï¿½lï¿½ments + appeler la rï¿½partition des ï¿½lï¿½ments __________________________________
 def repartirRochers(nb, rotation, scale_min, scale_max, colo):
     if cmds.objExists("Rocher*"):
         cmds.delete("Rocher*")
@@ -54,7 +54,7 @@ def repartirRochers(nb, rotation, scale_min, scale_max, colo):
     setImport('Rocher_moyen.fbx')
     setImport('Rocher_petit.fbx')
     
-    #-----gérer le nb d'instance par type de rochers TROUVER UN ALGO POUR LA REPARTITION
+    #-----gï¿½rer le nb d'instance par type de rochers TROUVER UN ALGO POUR LA REPARTITION
     #if (nb%2 == 0): #pair
     #    nbP = nb / 4
     #    nbM = nb / 4
@@ -70,7 +70,7 @@ def repartirRochers(nb, rotation, scale_min, scale_max, colo):
     nbG = 2
     nbE = 1
     
-    #----- appel de la fonction de répartition
+    #----- appel de la fonction de rï¿½partition
     Repartition('Rocher_enorme','fond',nbE, rotation, scale_min, scale_max)
     Repartition('Rocher_gros','fond',nbG, rotation, scale_min, scale_max)
     Repartition('Rocher_moyen','fond',nbM, rotation, scale_min, scale_max)
@@ -92,7 +92,7 @@ def repartirCoquillages(nb, rotation, scale_min, scale_max, colo):
     #-----import du mesh coquillage
     setImport('Coquillage.fbx')
     
-    #----- appel de la fonction de répartition
+    #----- appel de la fonction de rï¿½partition
     Repartition('Coquillage','fond', nb, rotation, scale_min, scale_max)
     
     #_______ application couleurs ________#
@@ -106,7 +106,7 @@ def repartirOursins(nb, rotation,scale_min,scale_max, colo):
     setImport('Oursin.fbx')
     
     
-    #----- appel de la fonction de répartition
+    #----- appel de la fonction de rï¿½partition
     Repartition('Oursin','fond', nb, rotation, scale_min, scale_max)
     
     #_______ application couleurs ________#
@@ -119,7 +119,7 @@ def repartirEtoiles(nb, rotation, scale_min, scale_max, colo):
     #-----import du mesh etoiles
     setImport('EtoileDeMer.fbx')
     
-    #----- appel de la fonction de répartition
+    #----- appel de la fonction de rï¿½partition
     Repartition('EtoileDeMer1','Rochers', nb-2-1, rotation, scale_min, scale_max)
     #Repartition('EtoileDeMer1','Rocher_gros1', 2, rotation, scale_min, scale_max)
     #Repartition('EtoileDeMer1','Rocher_moyen1', 1, rotation, scale_min, scale_max)
@@ -136,7 +136,7 @@ def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo):
     setImport('CorailCone_seul.fbx')
     setImport('CorailCone_triple.fbx')
     
-    #----- définition du nombre d'instance par type 
+    #----- dï¿½finition du nombre d'instance par type 
     if (nb%2 == 0 ): # nb pair
         nbS = nb / 4
         nbD = nb / 4    
@@ -148,7 +148,7 @@ def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo):
         nbT = (nb-1) / 4
         nbC= (nb-1) / 4
     
-    #----- appel de la fonction de répartition
+    #----- appel de la fonction de rï¿½partition
     Repartition('CorailCone_complexe','fond', nbC, rotation, scale_min, scale_max)
     Repartition('CorailCone_seul','fond', nbS, rotation, scale_min, scale_max)
     Repartition('CorailCone_double','fond', nbD, rotation, scale_min, scale_max)
@@ -165,7 +165,7 @@ def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo):
     setImport('CorailPhone_seul.fbx')
     setImport('CorailPhone_triple.fbx')
     
-    #----- définition du nombre d'instance par type 
+    #----- dï¿½finition du nombre d'instance par type 
     if (nb%2 == 0 ): # nb pair
         nbS = nb / 3
         nbD = nb / 3    
@@ -176,7 +176,7 @@ def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo):
         nbT = (nb-1) / 3
 
     
-    #----- appel de la fonction de répartition
+    #----- appel de la fonction de rï¿½partition
     Repartition('CorailPhone_seul','fond', nbS, rotation, scale_min, scale_max)
     Repartition('CorailPhone_double','fond', nbD, rotation, scale_min, scale_max)
     Repartition('CorailPhone_triple','fond', nbT, rotation, scale_min, scale_max)
