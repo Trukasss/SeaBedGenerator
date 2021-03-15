@@ -31,7 +31,8 @@ count = 0 #nombre de fois qu'on clique sur "create shoal"
 pathVignettes = cmds.internalVar(usd=True)+"SeaBedGenerator/Vignettes/"
 
 pathImport= cmds.internalVar(usd=True)+"SeaBedGenerator/Models/" #chemins jusqu'au FBX
-#print(path) #C:/Users/Administrateur/Documents/maya/2018/prefs/
+
+grpAnimVague = []
 
 #__________imports_________   #mettre les bons chemins
 #param = le nom du FBX
@@ -156,10 +157,10 @@ def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo):
         nbC= (nb-1) / 4
 
     #----- appel de la fonction de r�partition
-    Repartition('CorailCone_complexe','fond', nbC, rotation, scale_min, scale_max)
-    Repartition('CorailCone_seul','fond', nbS, rotation, scale_min, scale_max)
-    Repartition('CorailCone_double','fond', nbD, rotation, scale_min, scale_max)
-    Repartition('CorailCone_triple','fond', nbT, rotation, scale_min, scale_max)
+    grpAnimVague.append(Repartition('CorailCone_complexe','fond', nbC, rotation, scale_min, scale_max))
+    grpAnimVague.append(Repartition('CorailCone_seul','fond', nbS, rotation, scale_min, scale_max))
+    grpAnimVague.append(Repartition('CorailCone_double','fond', nbD, rotation, scale_min, scale_max))
+    grpAnimVague.append(Repartition('CorailCone_triple','fond', nbT, rotation, scale_min, scale_max))
 
 
     ApplyColor("CorailCone", colo, 0.2)
@@ -184,9 +185,9 @@ def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo):
 
 
     #----- appel de la fonction de r�partition
-    Repartition('CorailPhone_seul','fond', nbS, rotation, scale_min, scale_max)
-    Repartition('CorailPhone_double','fond', nbD, rotation, scale_min, scale_max)
-    Repartition('CorailPhone_triple','fond', nbT, rotation, scale_min, scale_max)
+    grpAnimVague.append(Repartition('CorailPhone_seul','fond', nbS, rotation, scale_min, scale_max))
+    grpAnimVague.append(Repartition('CorailPhone_double','fond', nbD, rotation, scale_min, scale_max))
+    grpAnimVague.append(Repartition('CorailPhone_triple','fond', nbT, rotation, scale_min, scale_max))
 
     ApplyColor("CorailPhone", colo, 0.2)
 
@@ -195,7 +196,7 @@ def repartirAlgues(nb, rotation, colo):
     colorierAlgue(gAlgue, colo)
     print("groupe des algues =", gAlgue)
 
-    Repartition(gAlgue,'fond', nb, rotation, 0.05, 0.05)
+    grpAnimVague.append(Repartition(gAlgue,'fond', nb, rotation, 0.05, 0.05))
 
 
 #__________________________coloration _______________________________________
@@ -497,7 +498,7 @@ vague_lenteur = cmds.floatSliderGrp(field=True, label='Lenteur', minValue=1.5, m
 
 cmds.separator(h=3, style="none")
 
-cmds.button(label="Waves",c="boutonAnimerVagues(cmds.floatSliderGrp(vague_amplitude, q=True, value=True), 1.5, cmds.floatSliderGrp(vague_lenteur, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Waves", c="boutonAnimerVagues(grpAnimVague, cmds.floatSliderGrp(vague_amplitude, q=True, value=True), 1.5, cmds.floatSliderGrp(vague_lenteur, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
 
 cmds.setParent( '..' )
 
