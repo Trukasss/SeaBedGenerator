@@ -6,8 +6,8 @@ import random
 cmds.file(f=True,new=True)
 
 # ------------------ REPARTITION AU SOL ------------------
-#param: nom de l'objet à instancier (type = chaine de caractère)
-#       sur quel support? (type = chaine de caractère)
+#param: nom de l'objet ï¿½ instancier (type = chaine de caractï¿½re)
+#       sur quel support? (type = chaine de caractï¿½re)
 #       nb d'instance 
 #       la rotation 
 
@@ -25,7 +25,7 @@ def Repartition(obj,target,quantity,rotation,scale_min, scale_max):
             r= random.randrange(1,4000)
         else :
             r= random.randrange(1,cmds.polyEvaluate(target, v= True))
-        # ------- Récupération du nombre de vertex du Sol
+        # ------- Rï¿½cupï¿½ration du nombre de vertex du Sol
         rT = cmds.polyEvaluate(v=True)
         p1=cmds.xform(target+".vtx["+str(r)+"]", q=True, translation=True, worldSpace=True)
         
@@ -70,16 +70,16 @@ def clean():
 
 # ------------------ INTERFACE ------------------
 
-#cmds.window("Générateur de fond marin")
+#cmds.window("Gï¿½nï¿½rateur de fond marin")
 #cmds.columnLayout()
 
 
-# ------- Répartition
+# ------- Rï¿½partition
 #sliderNbAlgue = cmds.intSliderGrp( field=True, label="Nombre d'algues", minValue=5, maxValue=200, value=5)
 #sliderRotAlgue = cmds.intSliderGrp( field=True, label="Rotation des algues", minValue=1, maxValue=15, value=1)
 #slider6 = cmds.intSliderGrp( field=True, label="Rotation des rochers", minValue=0, maxValue=100, value=0)
 
-#cmds.button(label="Générer",c="Repartition('Algue','fond',sliderNbAlgue,sliderRotAlgue)")
+#cmds.button(label="Gï¿½nï¿½rer",c="Repartition('Algue','fond',sliderNbAlgue,sliderRotAlgue)")
 
 
 
