@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import maya.cmds as cmds
 import maya.internal.common.cmd.base
 
@@ -6,7 +7,7 @@ import maya.internal.common.cmd.base
 #Variable globale avec le nom du deformeur
 nDeform = "waveDeform"
 
-#Fonction qui permet de créer un le deformeur wave avec deux parametres facultatifs ou de changer ces deux parametres si le deformeur existe deja.
+#Fonction qui permet de creer un le deformeur wave avec deux parametres facultatifs ou de changer ces deux parametres si le deformeur existe deja.
 def deformation(amplitude, maxRadius):
     global nDeform
     if (not cmds.objExists(nDeform)):
