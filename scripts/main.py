@@ -5,26 +5,27 @@ import mtoa.utils as mutils
 import mtoa.core as core
 
 
-#_____ nos codes _____
-from user import User
-from dir import Dir
-import imports
+#__________________ nos codes __________________
+from SeaBedGenerator.scripts import imports
 reload(imports)
-import Sol
+from SeaBedGenerator.scripts import Sol
 reload(Sol)
-import fish
+from SeaBedGenerator.scripts import fish
 reload(fish)
-import Algues
+from SeaBedGenerator.scripts import Algues
+from SeaBedGenerator.scripts.Algues import *
 reload(Algues)
-import RepartitionCode
+from SeaBedGenerator.scripts import RepartitionCode
+from SeaBedGenerator.scripts.RepartitionCode import *
 reload(RepartitionCode)
-import Animation
+from SeaBedGenerator.scripts import Animation
 reload(Animation)
+
 
 cmds.file(f=True, new=True)
 
 # __________________ d�finition de variables globales _______________________
-count = 0 #nombre de fois o� on clique sur "create shoal"
+count = 0 #nombre de fois qu'on clique sur "create shoal"
 
 #J'ai rentre le chemin d'acces dans une variable string. Maintenant il suffit de changer l'endroit qu'une seule fois.
 pathVignettes = cmds.internalVar(usd=True)+"SeaBedGenerator/Vignettes/"
@@ -32,13 +33,13 @@ pathVignettes = cmds.internalVar(usd=True)+"SeaBedGenerator/Vignettes/"
 pathImport= cmds.internalVar(usd=True)+"SeaBedGenerator/Models/" #chemins jusqu'au FBX
 #print(path) #C:/Users/Administrateur/Documents/maya/2018/prefs/
 
-#__________imports_________   #mettre les bons chemins  
-#param = le nom du FBX          
+#__________imports_________   #mettre les bons chemins
+#param = le nom du FBX
 def setImport(nomAsset):
     setImportPath = pathImport + nomAsset
     cmds.file(setImportPath, i=True, mergeNamespacesOnClash=True, namespace=':')
 # __________________________ FONCTION pour le choix des Coraux __________________________________
-def choixCoraux(): 
+def choixCoraux():
     #________definir les type de coraux_________
     if (cmds.radioButtonGrp(typeCoraux, q=True, select=True) == 1):
         setImport("CorailCone_complexe.fbx")
@@ -48,8 +49,8 @@ def choixCoraux():
     if (cmds.radioButtonGrp(typeCoraux, q=True, select=True) == 2):
         setImport("CorailPhone_seul.fbx")
         setImport("CorailPhone_triple.fbx")
-        
-        
+
+
 # __________________________ FONCTIONS pour importer �l�ments + appeler la r�partition des �l�ments __________________________________
 def repartirRochers(nb, rotation, scale_min, scale_max, colo):
     if cmds.objExists("Rocher*"):
@@ -59,7 +60,7 @@ def repartirRochers(nb, rotation, scale_min, scale_max, colo):
     setImport('Rocher_gros.fbx')
     setImport('Rocher_moyen.fbx')
     setImport('Rocher_petit.fbx')
-    
+
     #-----g�rer le nb d'instance par type de rochers TROUVER UN ALGO POUR LA REPARTITION
     #if (nb%2 == 0): #pair
     #    nbP = nb / 4
@@ -70,51 +71,51 @@ def repartirRochers(nb, rotation, scale_min, scale_max, colo):
     #    nbP = ((nb-1) / 4) +1
     #    nbM = (nb-1) / 4
     #    nbG = (nb-1) / 4
-    #   nbE = (nb-1) / 4 
+    #   nbE = (nb-1) / 4
     nbP = nb / 2
     nbM = nb / 2
     nbG = 2
     nbE = 1
-    
+
     #----- appel de la fonction de r�partition
     Repartition('Rocher_enorme','fond',nbE, rotation, scale_min, scale_max)
     Repartition('Rocher_gros','fond',nbG, rotation, scale_min, scale_max)
     Repartition('Rocher_moyen','fond',nbM, rotation, scale_min, scale_max)
     Repartition('Rocher_petit','fond',nbP, rotation, scale_min, scale_max)
-    
+
     cmds.select("Rocher*")
     listeRock= cmds.ls(sl=True, fl=True)
     cmds.polyUnite(listeRock, n="Rochers")
-    
+
     #_______ application couleurs ________#
-    
+
     ApplyColor("Rocher", colo, 0)
-    
+
 
 def repartirCoquillages(nb, rotation, scale_min, scale_max, colo):
     if cmds.objExists("Coquillage*"):
         cmds.delete("Coquillage*")
-    
+
     #-----import du mesh coquillage
     setImport('Coquillage.fbx')
-    
+
     #----- appel de la fonction de r�partition
     Repartition('Coquillage','fond', nb, rotation, scale_min, scale_max)
-    
+
     #_______ application couleurs ________#
     ApplyColor("Coquillage", colo, 0)
 
-def repartirOursins(nb, rotation,scale_min,scale_max, colo): 
+def repartirOursins(nb, rotation,scale_min,scale_max, colo):
     if cmds.objExists("Oursin*"):
         cmds.delete("Oursin*")
         #cmds.delete("grOursin*")
     #-----import du mesh oursins
     setImport('Oursin.fbx')
-    
-    
+
+
     #----- appel de la fonction de r�partition
     Repartition('Oursin','fond', nb, rotation, scale_min, scale_max)
-    
+
     #_______ application couleurs ________#
     ApplyColor("Oursin", colo, 0)
 
@@ -124,43 +125,43 @@ def repartirEtoiles(nb, rotation, scale_min, scale_max, colo):
         cmds.delete("EtoileDeMer*")
     #-----import du mesh etoiles
     setImport('EtoileDeMer.fbx')
-    
+
     #----- appel de la fonction de r�partition
     Repartition('EtoileDeMer1','Rochers', nb-2-1, rotation, scale_min, scale_max)
     #Repartition('EtoileDeMer1','Rocher_gros1', 2, rotation, scale_min, scale_max)
     #Repartition('EtoileDeMer1','Rocher_moyen1', 1, rotation, scale_min, scale_max)
 
     ApplyColor("EtoileDeMer", colo, 0.4)
-    
+
 def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo):
     if cmds.objExists("CorailCone*"):
         cmds.delete("CorailCone*")
-    
+
     #-----import des mesh coraux cone
     setImport('CorailCone_complexe.fbx')
     setImport('CorailCone_double.fbx')
     setImport('CorailCone_seul.fbx')
     setImport('CorailCone_triple.fbx')
-    
-    #----- d�finition du nombre d'instance par type 
+
+    #----- d�finition du nombre d'instance par type
     if (nb%2 == 0 ): # nb pair
         nbS = nb / 4
-        nbD = nb / 4    
+        nbD = nb / 4
         nbT = nb / 4
         nbC= nb / 4
     if(nb%2 !=0 ): #nb impair
         nbS = ((nb-1) / 4) +1
-        nbD = (nb-1) / 4    
+        nbD = (nb-1) / 4
         nbT = (nb-1) / 4
         nbC= (nb-1) / 4
-    
+
     #----- appel de la fonction de r�partition
     Repartition('CorailCone_complexe','fond', nbC, rotation, scale_min, scale_max)
     Repartition('CorailCone_seul','fond', nbS, rotation, scale_min, scale_max)
     Repartition('CorailCone_double','fond', nbD, rotation, scale_min, scale_max)
     Repartition('CorailCone_triple','fond', nbT, rotation, scale_min, scale_max)
-    
-    
+
+
     ApplyColor("CorailCone", colo, 0.2)
 
 def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo):
@@ -170,32 +171,33 @@ def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo):
     setImport('CorailPhone_double.fbx')
     setImport('CorailPhone_seul.fbx')
     setImport('CorailPhone_triple.fbx')
-    
-    #----- d�finition du nombre d'instance par type 
+
+    #----- d�finition du nombre d'instance par type
     if (nb%2 == 0 ): # nb pair
         nbS = nb / 3
-        nbD = nb / 3    
+        nbD = nb / 3
         nbT = nb / 3
     if(nb%2 !=0 ): #nb impair
         nbS = ((nb-1) / 3) +1
-        nbD = (nb-1) / 3    
+        nbD = (nb-1) / 3
         nbT = (nb-1) / 3
 
-    
+
     #----- appel de la fonction de r�partition
     Repartition('CorailPhone_seul','fond', nbS, rotation, scale_min, scale_max)
     Repartition('CorailPhone_double','fond', nbD, rotation, scale_min, scale_max)
     Repartition('CorailPhone_triple','fond', nbT, rotation, scale_min, scale_max)
-    
-    ApplyColor("CorailPhone", colo, 0.2)    
-    
+
+    ApplyColor("CorailPhone", colo, 0.2)
+
 def repartirAlgues(nb, rotation, colo):
-    g_main = dessAlgue()
-    colorierAlgue(g_main, colo)
-    
-    Repartition('Algue','fond', nb, rotation, 0.05, 0.05)
-    
-   
+    gAlgue = dessAlgue()
+    colorierAlgue(gAlgue, colo)
+    print("groupe des algues =", gAlgue)
+
+    Repartition(gAlgue,'fond', nb, rotation, 0.05, 0.05)
+
+
 #__________________________coloration _______________________________________
 def ApplyColor(nom, colo, emission):
     mat = cmds.shadingNode('aiStandardSurface', name=nom+"Mat", asShader=True)
@@ -209,8 +211,8 @@ def ApplyColor(nom, colo, emission):
 
 #__________________________clean la scene____________________________________
 def clean():
-    cmds.file(f=True, new=True)   
-    count = 0 
+    cmds.file(f=True, new=True)
+    count = 0
 
 
 
@@ -220,15 +222,13 @@ cmds.window(w=450,title="SeaBed Generator")
 form = cmds.formLayout(w=1920,h=1080)
 
 tabs = cmds.tabLayout(borderStyle="none",w=450,h=1000)
-cmds.formLayout( form, edit=True, attachForm=((tabs, 'left', 12)) )
+cmds.formLayout( form, edit=True, attachForm=((tabs, 'left', 15)) )
 
 
 #//////////////////////TAB1//////////////#
 
 
 child1 = cmds.scrollLayout(w=300)
-
-
 
 #------Field-----#
 
@@ -250,7 +250,7 @@ cmds.separator(h=10,w=400)
 cmds.text(label="Place some rocks.", font='boldLabelFont',h=50)
 
 #Sources image a changer
-cmds.image(image= path+"Rochers.png")
+cmds.image(image= pathVignettes+"Rochers.png")
 cmds.separator(h=20, style="none")
 
 rock_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=10,value=4,w=400)
@@ -271,7 +271,7 @@ cmds.separator(h=10,w=400)
 cmds.text(label="Place some shells.", font='boldLabelFont',h=50)
 
 #Sources image a changer
-cmds.image(image= path + "Coquillage.png")
+cmds.image(image= pathVignettes + "Coquillage.png")
 cmds.separator(h=20, style="none")
 
 shell_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=50,value=15,w=400)
@@ -294,7 +294,7 @@ cmds.separator(h=10,w=400)
 cmds.text(label="Place some sea urchin.", font='boldLabelFont',h=50)
 
 #Sources image a changer
-cmds.image(image= path + "Oursin.png")
+cmds.image(image= pathVignettes + "Oursin.png")
 cmds.separator(h=20, style="none")
 
 urchin_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=50,value=15,w=400)
@@ -328,7 +328,7 @@ child2 = cmds.scrollLayout(w=300)
 cmds.text(label="Place some starfish on the rocks.", font='boldLabelFont',h=50)
 
 #Sources image a changer
-cmds.image(image= path + "EtoileDeMer.png")
+cmds.image(image= pathVignettes + "EtoileDeMer.png")
 cmds.separator(h=20, style="none")
 
 star_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=70,value=5,w=400)
@@ -348,7 +348,7 @@ cmds.separator(h=10,w=400)
 cmds.text(label="Place some Corals.", font='boldLabelFont',h=50)
 
 #Sources image a changer
-cmds.image(image= path + "Coraux1.png")
+cmds.image(image= pathVignettes + "Coraux1.png")
 cmds.separator(h=20, style="none")
 
 coral_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=20,value=6,w=400)
@@ -369,7 +369,7 @@ cmds.separator(h=10,w=400)
 cmds.text(label="Place some Corals.", font='boldLabelFont',h=50)
 
 #Sources image a changer
-cmds.image(image= path + "Coraux2.png")
+cmds.image(image= pathVignettes + "Coraux2.png")
 cmds.separator(h=20, style="none")
 
 coral2_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=20,value=6,w=400)
@@ -389,17 +389,10 @@ cmds.setParent( '..' )
 
 
 
-
 #//////////////////////TAB3/////////////////#
-
-
-
-
 
 child3 = cmds.scrollLayout(w=300)
 #cmds.iconTextRadioCollection( "itRadCollection" )
-
-
 
 
 #------Fish-----#
@@ -407,14 +400,14 @@ cmds.separator(h=15, style="none")
 
 cmds.text(label="Generate Shoal. ", font='boldLabelFont',h=50)
 
-
 cmds.separator(h=10, style="none")
 cmds.rowColumnLayout(numberOfColumns=2,cw=[(1,200),(2,200)])
 
-#Sources image a changer
-typeFishI=cmds.iconTextRadioCollection( 'fishCollection' )
+
+typeFishI=cmds.iconTextRadioCollection( 'fishCollection10' ) #il faudrait soit faire sans, donc via une autre
+#maniere de mettre en forme les bouttons, soit vérifier si le nom de l'objet existe avec un objExists(fishCollection) ?
 fleche=cmds.iconTextRadioButton( st='iconOnly', i1= pathVignettes +'PoissonFleche.png', l='fleche')
-long=cmds.iconTextRadioButton( st='iconOnly', i1= pathVignettes+'PoissonLong.png', l='long')  
+long=cmds.iconTextRadioButton( st='iconOnly', i1= pathVignettes+'PoissonLong.png', l='long')
 
 cmds.setParent("..")
 cmds.separator(h=20, style="none")
@@ -431,21 +424,16 @@ cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
 
 cmds.button(label="Shoal", c="count = multiple(count, couleurs)",h=40,w=400)
 
-
 cmds.separator(h=30, style="none")
 cmds.separator(h=10,w=400)
 
 
 
 
-
-
 #------Algae-----#
-
 
 cmds.separator(h=30, style="none")
 cmds.rowColumnLayout(numberOfColumns=2,cw=[(1,380),(2,20)])
-
 
 cmds.text(label="Create your Algae.", font='boldLabelFont',h=20,w=100)
 cmds.button(label="i",c="AlgaeExp()",h=20,w=20)
@@ -491,9 +479,7 @@ cmds.separator(h=20, style="none")
 
 cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
 
-
 cmds.button(label="Algae", c="repartirAlgues(cmds.intSliderGrp(algae_number, q=True, value=True),cmds.floatSliderGrp(algae_rotate, q=True, value=True), couleurs)",h=40,w=400)
-
 
 cmds.setParent( '..' )
 
@@ -506,16 +492,14 @@ cmds.separator(h=30, style="none")
 cmds.text(label="Animate your scene.", font='boldLabelFont',h=20,w=400)
 cmds.separator(h=30, style="none")
 
-vague_amplitude = cmds.floatSliderGrp(field=True, label='Amplitude', minValue=0.01, maxValue=1, value=0.1, step=0.01, w=400)
+vague_amplitude = cmds.floatSliderGrp(field=True, label='Amplitude', minValue=0.001, maxValue=0.10, value=0.01, step=0.001, w=400)
 vague_lenteur = cmds.floatSliderGrp(field=True, label='Lenteur', minValue=1.5, maxValue=200, value=100, step=0.5, w=400)
 
 cmds.separator(h=3, style="none")
 
-#cmds.button(label="Waves",c="boutonAnimerVagues(vague_amplitude, 1.5, vague_lenteur)", bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Waves",c="boutonAnimerVagues(cmds.floatSliderGrp(vague_amplitude, q=True, value=True), 1.5, cmds.floatSliderGrp(vague_lenteur, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
 
 cmds.setParent( '..' )
-cmds.setParent( '..' )
-
 
 #//////////////////////TAB5//////////////#
 child5 = cmds.scrollLayout(w=400)
@@ -540,7 +524,7 @@ cmds.setParent( '..' )
 
 
 def Color():
-    
+
     couleurEditor=cmds.colorEditor()
     couleur = cmds.colorEditor(q=True, rgb=True)
     R=couleur[0]
@@ -548,39 +532,39 @@ def Color():
     B=couleur[2]
     print(R,V,B)
     return R,V,B
-    
+
 def AlgaeExp():
     cmds.window(h=280,w=560,title="Information Algae settings")
     cmds.rowColumnLayout(h=280,w=560,adjustableColumn=True)
-    
+
     cmds.separator(h=20, style="none")
     cmds.text(label="Algae's parameters info :", font='boldLabelFont')
-    
+
     cmds.separator(h=25, style="none")
-    
+
     cmds.text(label="   - Min / Max scale :",align='left',w=400,font='boldLabelFont')
     cmds.separator(h=3, style="none")
     cmds.text(label="       The minimum and maximum scale of the whole algae. \n       For reference, a scale of 1 is about the same size as the big corals.",align='left',w=400,fn="smallPlainLabelFont")
     cmds.separator(h=15, style="none")
-    
+
     cmds.text(label="   - Min / Max branches :",align='left',w=400,font='boldLabelFont')
     cmds.separator(h=3, style="none")
     cmds.text(label="       The minimum and maximum amount of main branches around the stem.",align='left',w=400,fn="smallPlainLabelFont")
     cmds.separator(h=15, style="none")
-    
-    cmds.text(label="   - Min / Max sub branches :",align='left',w=400,font='boldLabelFont') 
+
+    cmds.text(label="   - Min / Max sub branches :",align='left',w=400,font='boldLabelFont')
     cmds.separator(h=3, style="none")
     cmds.text(label="       The minimum and maximum amount of children branches drawn on the prior branche.",align='left',w=400,fn="smallPlainLabelFont")
     cmds.separator(h=15, style="none")
-    
+
     cmds.text(label="   - Min / Max starting proportion :",align='left',w=400,font='boldLabelFont')
     cmds.separator(h=3, style="none")
     cmds.text(label="       Where the sub branches start according to the prior branches. \n       For example 0.2% will draw each sub branche up about 2/10 of the length of the prior branche.\n       While 0.5% will draw a branche around the middle of the prior branche.",align='left',w=400,fn="smallPlainLabelFont")
-    cmds.showWindow()    
-    
+    cmds.showWindow()
+
 
 def SetupLighting() :
-    
+
 	#creation lumiere ambiante
 	mutils.createLocator("aiAreaLight", asLight=True)
 	lum1 = cmds.rename("LumiereAmbiante")
@@ -597,7 +581,7 @@ def SetupLighting() :
 	cmds.setAttr(lum2+".color", 1, 0.66, 0.44)
 	cmds.setAttr(lum2+".intensity", 100)
 
-def SetupCamera() :	
+def SetupCamera() :
 	cam = cmds.camera()
 	cmds.lookThru(cam[0])
 	cmds.setAttr(cam[1]+".renderable", True)
