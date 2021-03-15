@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 import maya.cmds as cmds
 import random as rand
-import RepartitionCode
+from SeaBedGenerator.scripts import RepartitionCode
 reload(RepartitionCode)
 
 #clear scenes
 cmds.file(f=True, new=True)
 
 #variable globale
-count = 0 #nombre de fois où on clique sur "create shoal"
+count = 0 #nombre de fois ou on clique sur "create shoal"
 
 
 def shoal(n, colo):
-    #---- déclaration des var-----
+    #---- declaration des var-----
     nbFish = cmds.intSliderGrp(SliderNbFish, q=True, value=True)
     typeFishRadio = cmds.radioButtonGrp(typeFish, q=True, select=True)
     
@@ -52,7 +52,7 @@ def shoal(n, colo):
        cmds.parent( f, 'grp_fishy'+str(n))
        
     #------------ REPARTITION ici -------------------
-    randomY = rand.uniform(4,8) #?gérer la hauteur
+    randomY = rand.uniform(4,8) #?gerer la hauteur
     cmds.move(rand.uniform(-lar/2,lar/2),randomY,rand.uniform(-long/2,long/2), 'grp_fishy'+str(n)) #repartition dans l'espace sur un plan
     cmds.rotate(rand.uniform(-15,15),rand.uniform(-180,180),0, 'grp_fishy'+str(n))
    
@@ -76,7 +76,7 @@ def applyMaterial(obj, r, g, b):
         shd = cmds.shadingNode('blinn', name=obj + "_lambert", asShader=True)
         shdSG = cmds.sets(name='%sSG' % shd, empty=True, renderable=True, noSurfaceShader=True)
         cmds.connectAttr('%s.outColor' % shd, '%s.surfaceShader' % shdSG)
-    #voilà faut juste rajouter cette ligne
+    #voila faut juste rajouter cette ligne
         cmds.setAttr("%s.color" %shd, r, g, b)
         cmds.sets(obj, e=True, forceElement=shdSG)
 
@@ -89,7 +89,7 @@ def applyMaterialv2(obj, r, g , b):
     cmds.hyperShade(assign= mat)
 
 def applyColor(nomType, colo):
-    #--- definition du nom du type de poisson à instancier ---
+    #--- definition du nom du type de poisson a instancier ---
     
     Nag = cmds.shadingNode('aiStandardSurface', name="na", asShader=True)
     cmds.setAttr(Nag+".baseColor", 0.87059,0.79216,0.63922)
