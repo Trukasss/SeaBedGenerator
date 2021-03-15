@@ -31,7 +31,6 @@ def Repartition(obj,target,quantity,rotation,scale_min, scale_max):
         
         # ------- instance des objets
         obji=cmds.duplicate(obj, n=obj+str(i))
-        print(obji)
         cmds.move(p1[0],p1[1],p1[2], obj+str(i), r=True)
         scaleI= random.uniform(scale_min,scale_max)
         cmds.scale(scaleI,scaleI,scaleI,obj+str(i))
@@ -62,6 +61,8 @@ def Repartition(obj,target,quantity,rotation,scale_min, scale_max):
     
     cmds.delete("grLocators") #*|*"
     cmds.delete(obj)
+    print ("g = " +str(g))
+    return g
 
 # ------------------ INTERFACE ------------------
 
