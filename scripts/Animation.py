@@ -26,11 +26,8 @@ def animerDeformation(lenteur):
     else:
         cmds.expression(nom, e=True, s= nDeform+".offset = time1.outTime/"+str(lenteur))
 
-def selObjVagues():
-    pass
-
-def boutonAnimerVagues(amplitude=0.05, maxRadius=1.5, lenteur=100):
-    selObjVagues()
+def boutonAnimerVagues(grpAnimVague, amplitude=0.05, maxRadius=1.5, lenteur=100):
+    cmds.select(grpAnimVague)
     deformation(amplitude, maxRadius)
     animerDeformation(lenteur)
 
