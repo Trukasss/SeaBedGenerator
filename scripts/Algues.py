@@ -15,7 +15,7 @@ def clear():
 # - puissance = int ou float, je recommande 1
 # - pDepart = liste de 3 elements int [0, 0, 0]
 # - taille = int, je recommande 40
-# - getX = int x de la position qu'on veut récupérer sur la courbe
+# - getX = int x de la position qu'on veut recuperer sur la courbe
 def dessCourbe (formule, puissance, pDepart, taille, epaisseur, getX): 
     
     pDepX = pDepart[0]
