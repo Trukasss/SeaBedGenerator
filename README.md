@@ -9,7 +9,7 @@ Pour faire fonctionner ce générateur il faut :
 jusqu'au dossier regroupant les fbx
 3: Changer les chemins dans l'interface également en pointant le dossier de vignettes (main.py, ligne 24, 407 et 408)
 4 : ouvrir tout les scripts dans l'editeur Maya (ou autre) 
-5: Exécuter le code imports.py -> sol.py -> fish.py -> Algues.py -> RepartitionCode.py (ça permet de les compiler et 
+5: Exécuter le code imports.py -> sol.py -> fish.py -> Algues.py -> RepartitionCode.py -> Animation.py (ça permet de les compiler et 
 de pas avoir d'erreur quand on va executer le main.py)  
 6: executer le main.py (et ça fonctionne!)
 

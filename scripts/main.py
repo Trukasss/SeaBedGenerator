@@ -3,7 +3,11 @@ import random
 import math
 import mtoa.utils as mutils
 import mtoa.core as core
+
+
 #_____ nos codes _____
+from user import User
+from dir import Dir
 import imports
 reload(imports)
 import Sol
@@ -14,6 +18,8 @@ import Algues
 reload(Algues)
 import RepartitionCode
 reload(RepartitionCode)
+import Animation
+reload(Animation)
 
 cmds.file(f=True, new=True)
 
@@ -21,7 +27,7 @@ cmds.file(f=True, new=True)
 count = 0 #nombre de fois o� on clique sur "create shoal"
 
 #J'ai rentre le chemin d'acces dans une variable string. Maintenant il suffit de changer l'endroit qu'une seule fois.
-path = cmds.internalVar(usd=True)+"SeaBedGenerator/Vignettes/"
+pathVignettes = cmds.internalVar(usd=True)+"SeaBedGenerator/Vignettes/"
 
 pathImport= cmds.internalVar(usd=True)+"SeaBedGenerator/Models/" #chemins jusqu'au FBX
 #print(path) #C:/Users/Administrateur/Documents/maya/2018/prefs/
@@ -205,7 +211,9 @@ def ApplyColor(nom, colo, emission):
 def clean():
     cmds.file(f=True, new=True)   
     count = 0 
-    
+
+
+
 #__________INTERFACE _________
 cmds.window(w=450,title="SeaBed Generator")
 
@@ -405,8 +413,8 @@ cmds.rowColumnLayout(numberOfColumns=2,cw=[(1,200),(2,200)])
 
 #Sources image a changer
 typeFishI=cmds.iconTextRadioCollection( 'fishCollection' )
-fleche=cmds.iconTextRadioButton( st='iconOnly', i1='C:/Users/Administrateur/Desktop/Cours/Python/Projet/Vignettes/PoissonFleche.png', l='fleche')
-long=cmds.iconTextRadioButton( st='iconOnly', i1='C:/Users/Administrateur/Desktop/Cours/Python/Projet/Vignettes/PoissonLong.png', l='long')  
+fleche=cmds.iconTextRadioButton( st='iconOnly', i1= pathVignettes +'PoissonFleche.png', l='fleche')
+long=cmds.iconTextRadioButton( st='iconOnly', i1= pathVignettes+'PoissonLong.png', l='long')  
 
 cmds.setParent("..")
 cmds.separator(h=20, style="none")
@@ -491,16 +499,29 @@ cmds.setParent( '..' )
 
 cmds.setParent( '..' )
 
-
-
-#//////////////////////TAB3//////////////#
-
-
+#//////////////////////TAB4//////////////#
 child4 = cmds.scrollLayout(w=400)
 
 cmds.separator(h=30, style="none")
-cmds.text(label="Render your scene.", font='boldLabelFont',h=20,w=400)
+cmds.text(label="Animate your scene.", font='boldLabelFont',h=20,w=400)
+cmds.separator(h=30, style="none")
 
+vague_amplitude = cmds.floatSliderGrp(field=True, label='Amplitude', minValue=0.01, maxValue=1, value=0.1, step=0.01, w=400)
+vague_lenteur = cmds.floatSliderGrp(field=True, label='Lenteur', minValue=1.5, maxValue=200, value=100, step=0.5, w=400)
+
+cmds.separator(h=3, style="none")
+
+#cmds.button(label="Waves",c="boutonAnimerVagues(vague_amplitude, 1.5, vague_lenteur)", bgc=[0.2,0.2,0.2],w=400)
+
+cmds.setParent( '..' )
+cmds.setParent( '..' )
+
+
+#//////////////////////TAB5//////////////#
+child5 = cmds.scrollLayout(w=400)
+
+cmds.separator(h=30, style="none")
+cmds.text(label="Render your scene.", font='boldLabelFont',h=20,w=400)
 cmds.separator(h=30, style="none")
 
 cmds.button(label="Light",c="SetupLighting()",bgc=[0.2,0.2,0.2],w=400)
@@ -594,7 +615,7 @@ def RenderView() :
     cmds.arnoldRenderView(mode ="open")
     cmds.arnoldRenderView()
 
-cmds.tabLayout( tabs, edit=True, tabLabel=((child1, "Field / Details"), (child2, "Starfish / Corals"),(child3, "Fish / Algae"),(child4, "Render")) )
+cmds.tabLayout( tabs, edit=True, tabLabel=((child1, "Field / Details"), (child2, "Starfish / Corals"), (child3, "Fish / Algae"), (child4, "Animation"), (child5, "Render")) )
 cmds.setParent( '..' )
 view=cmds.paneLayout(w=1450,h=1080)
 cmds.modelPanel(mbv=0)
