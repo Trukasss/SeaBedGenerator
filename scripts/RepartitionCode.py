@@ -31,6 +31,7 @@ def Repartition(obj,target,quantity,rotation,scale_min, scale_max):
         
         # ------- instance des objets
         obji=cmds.duplicate(obj, n=obj+str(i))
+        print(obji)
         cmds.move(p1[0],p1[1],p1[2], obj+str(i), r=True)
         scaleI= random.uniform(scale_min,scale_max)
         cmds.scale(scaleI,scaleI,scaleI,obj+str(i))
@@ -50,7 +51,7 @@ def Repartition(obj,target,quantity,rotation,scale_min, scale_max):
         cmds.aimConstraint(offset=(0,0,0), weight=1, aimVector=(0,1,0), worldUpType="vector", worldUpVector=(0,1,0))
         
         
-        cmds.parent(obji,g)
+        cmds.parent(obji[0],g)
         cmds.parent(l,gL)
         cmds.select("grLocators")
         #cmds.hide()
@@ -61,12 +62,6 @@ def Repartition(obj,target,quantity,rotation,scale_min, scale_max):
     
     cmds.delete("grLocators") #*|*"
     cmds.delete(obj)
-
-
-# ------------------ CLEAN SCENE ------------------ 
- 
-def clean():
-    cmds.file(f=True, new=True)  
 
 # ------------------ INTERFACE ------------------
 
