@@ -1,8 +1,12 @@
 import maya.cmds as cmds
 import maya.internal.common.cmd.base
 
+#--------------------- ANIMATION DEFORMEUR ---------------------
+
+#Variable globale avec le nom du deformeur
 nDeform = "waveDeform"
 
+#Fonction qui permet de créer un le deformeur wave avec deux parametres facultatifs ou de changer ces deux parametres si le deformeur existe deja.
 def deformation(amplitude=0.05, maxRadius=1.5):
     global nDeform
     if (not cmds.objExists(nDeform)):
@@ -11,13 +15,18 @@ def deformation(amplitude=0.05, maxRadius=1.5):
     cmds.setAttr(nDeform+".amplitude", amplitude)
     cmds.setAttr(nDeform+".maxRadius", maxRadius)
 
-def animerDeformation(vitesse=100):
+#Fonction qui permet d'animer l'offset du deformeur du meme nom, en le liant via une expression au temps.
+#Le rapport est divise par un parametre (par default 100) lenteur qui divise le temps par la valeur indiquee.
+def animerDeformation(lenteur=100):
     global nDeform
     nom = "waveDeformExpression"
     if(not cmds.objExists(nom)):
-        cmds.expression(n = nom, s= nDeform+".offset = time1.outTime/"+str(vitesse))
+        cmds.expression(n = nom, s= nDeform+".offset = time1.outTime/"+str(lenteur))
     else:
-        cmds.expression(nom, e=True, s= nDeform+".offset = time1.outTime/"+str(vitesse))
+        cmds.expression(nom, e=True, s= nDeform+".offset = time1.outTime/"+str(lenteur))
 
-deformation(0.01)
-animerDeformation()
+#Exemple de son utilisation :
+#deformation(0.01)
+#animerDeformation()
+
+#--------------------- ANIMATION BOIDS ---------------------
