@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#__________________ imports modules python et maya __________________
 import maya.cmds as cmds
 import random
 import math
@@ -6,46 +7,41 @@ import mtoa.utils as mutils
 import mtoa.core as core
 
 
-#__________________ nos codes __________________
-from SeaBedGenerator.scripts import imports
-reload(imports)
-from SeaBedGenerator.scripts.Sol import Fond
-from SeaBedGenerator.scripts.fish import shoal
-from SeaBedGenerator.scripts.Algues import dessAlgue, colorierAlgue
-from SeaBedGenerator.scripts.RepartitionCode import Repartition
+#__________________ imports de nos codes __________________
+from SeaBedGenerator.scripts import RepartitionCode 
+reload(RepartitionCode)
+from SeaBedGenerator.scripts import Sol
+reload(Sol)
+from SeaBedGenerator.scripts import fish
+reload(fish)
+from SeaBedGenerator.scripts import Algues
+reload(Algues)
 from SeaBedGenerator.scripts import Animation
 reload(Animation)
 
+#__________________ imports pour VSCode __________________
+from SeaBedGenerator.scripts.RepartitionCode import Repartition
+from SeaBedGenerator.scripts.Sol import Fond
+from SeaBedGenerator.scripts.fish import shoal
+from SeaBedGenerator.scripts.Algues import dessAlgue, colorierAlgue
+from SeaBedGenerator.scripts.Animation import boutonAnimerVagues
 
 cmds.file(f=True, new=True)
 
-# __________________ definition de variables globales _______________________
+# __________________ definition de variables globales __________________
 count = 0 #nombre de fois qu'on clique sur "create shoal"
-
-#J'ai rentre le chemin d'acces dans une variable string. Maintenant il suffit de changer l'endroit qu'une seule fois.
 pathVignettes = cmds.internalVar(usd=True)+"SeaBedGenerator/Vignettes/"
 pathImport= cmds.internalVar(usd=True)+"SeaBedGenerator/Models/"
 grpAnimVague = []
 
-#__________imports_________
+#__________________ import __________________
 #param = le nom du FBX
 def setImport(nomAsset):
     setImportPath = pathImport + nomAsset
     cmds.file(setImportPath, i=True, mergeNamespacesOnClash=True, namespace=':')
-# __________________________ FONCTION pour le choix des Coraux __________________________________
-def choixCoraux():
-    #________definir les type de coraux_________
-    if (cmds.radioButtonGrp(typeCoraux, q=True, select=True) == 1):
-        setImport("CorailCone_complexe.fbx")
-        setImport("CorailCone_double.fbx")
-        setImport("CorailCone_triple.fbx")
-        setImport("CorailCone_double.fbx")
-    if (cmds.radioButtonGrp(typeCoraux, q=True, select=True) == 2):
-        setImport("CorailPhone_seul.fbx")
-        setImport("CorailPhone_triple.fbx")
 
 
-# __________________________ FONCTIONS pour importer �l�ments + appeler la r�partition des �l�ments __________________________________
+# __________________ FONCTIONS pour importer �l�ments + appeler la r�partition des �l�ments __________________
 def repartirRochers(nb, rotation, scale_min, scale_max, colo):
     if cmds.objExists("Rocher*"):
         cmds.delete("Rocher*")
@@ -55,23 +51,12 @@ def repartirRochers(nb, rotation, scale_min, scale_max, colo):
     setImport('Rocher_moyen.fbx')
     setImport('Rocher_petit.fbx')
 
-    #-----g�rer le nb d'instance par type de rochers TROUVER UN ALGO POUR LA REPARTITION
-    #if (nb%2 == 0): #pair
-    #    nbP = nb / 4
-    #    nbM = nb / 4
-    #    nbG = nb / 4
-    #    nbE = nb / 4
-    #else:
-    #    nbP = ((nb-1) / 4) +1
-    #    nbM = (nb-1) / 4
-    #    nbG = (nb-1) / 4
-    #   nbE = (nb-1) / 4
     nbP = nb / 2
     nbM = nb / 2
     nbG = 2
     nbE = 1
 
-    #----- appel de la fonction de r�partition
+    #----- appel de la fonction de repartition
     Repartition('Rocher_enorme','fond',nbE, rotation, scale_min, scale_max)
     Repartition('Rocher_gros','fond',nbG, rotation, scale_min, scale_max)
     Repartition('Rocher_moyen','fond',nbM, rotation, scale_min, scale_max)
@@ -93,11 +78,12 @@ def repartirCoquillages(nb, rotation, scale_min, scale_max, colo):
     #-----import du mesh coquillage
     setImport('Coquillage.fbx')
 
-    #----- appel de la fonction de r�partition
+    #----- appel de la fonction de repartition
     Repartition('Coquillage','fond', nb, rotation, scale_min, scale_max)
 
-    #_______ application couleurs ________#
+    #----- application couleurs
     ApplyColor("Coquillage", colo, 0)
+
 
 def repartirOursins(nb, rotation,scale_min,scale_max, colo):
     if cmds.objExists("Oursin*"):
@@ -106,11 +92,10 @@ def repartirOursins(nb, rotation,scale_min,scale_max, colo):
     #-----import du mesh oursins
     setImport('Oursin.fbx')
 
-
-    #----- appel de la fonction de r�partition
+    #----- appel de la fonction de repartition
     Repartition('Oursin','fond', nb, rotation, scale_min, scale_max)
 
-    #_______ application couleurs ________#
+    #----- application couleurs
     ApplyColor("Oursin", colo, 0)
 
 
@@ -120,12 +105,13 @@ def repartirEtoiles(nb, rotation, scale_min, scale_max, colo):
     #-----import du mesh etoiles
     setImport('EtoileDeMer.fbx')
 
-    #----- appel de la fonction de r�partition
+    #----- appel de la fonction de repartition
     Repartition('EtoileDeMer1','Rochers', nb-2-1, rotation, scale_min, scale_max)
     #Repartition('EtoileDeMer1','Rocher_gros1', 2, rotation, scale_min, scale_max)
     #Repartition('EtoileDeMer1','Rocher_moyen1', 1, rotation, scale_min, scale_max)
 
     ApplyColor("EtoileDeMer", colo, 0.4)
+
 
 def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo):
     if cmds.objExists("CorailCone*"):
@@ -137,7 +123,7 @@ def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo):
     setImport('CorailCone_seul.fbx')
     setImport('CorailCone_triple.fbx')
 
-    #----- d�finition du nombre d'instance par type
+    #----- definition du nombre d'instance par type
     if (nb%2 == 0 ): # nb pair
         nbS = nb / 4
         nbD = nb / 4
@@ -149,14 +135,14 @@ def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo):
         nbT = (nb-1) / 4
         nbC= (nb-1) / 4
 
-    #----- appel de la fonction de r�partition
+    #----- appel de la fonction de repartition
     grpAnimVague.append(Repartition('CorailCone_complexe','fond', nbC, rotation, scale_min, scale_max))
     grpAnimVague.append(Repartition('CorailCone_seul','fond', nbS, rotation, scale_min, scale_max))
     grpAnimVague.append(Repartition('CorailCone_double','fond', nbD, rotation, scale_min, scale_max))
     grpAnimVague.append(Repartition('CorailCone_triple','fond', nbT, rotation, scale_min, scale_max))
 
-
     ApplyColor("CorailCone", colo, 0.2)
+
 
 def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo):
     if cmds.objExists("CorailPhone*"):
@@ -166,7 +152,7 @@ def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo):
     setImport('CorailPhone_seul.fbx')
     setImport('CorailPhone_triple.fbx')
 
-    #----- d�finition du nombre d'instance par type
+    #----- definition du nombre d'instance par type
     if (nb%2 == 0 ): # nb pair
         nbS = nb / 3
         nbD = nb / 3
@@ -176,13 +162,13 @@ def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo):
         nbD = (nb-1) / 3
         nbT = (nb-1) / 3
 
-
-    #----- appel de la fonction de r�partition
+    #----- appel de la fonction de repartition
     grpAnimVague.append(Repartition('CorailPhone_seul','fond', nbS, rotation, scale_min, scale_max))
     grpAnimVague.append(Repartition('CorailPhone_double','fond', nbD, rotation, scale_min, scale_max))
     grpAnimVague.append(Repartition('CorailPhone_triple','fond', nbT, rotation, scale_min, scale_max))
 
     ApplyColor("CorailPhone", colo, 0.2)
+
 
 def repartirPoissons(co, colo, ShoalNumber, nbFish, typeFishRadio, espacementFish, scaleFish):
     if (typeFishRadio== 2): # = le poisson long
@@ -196,6 +182,7 @@ def repartirPoissons(co, colo, ShoalNumber, nbFish, typeFishRadio, espacementFis
         shoal(co, colo, nbFish, espacementFish, scaleFish, nomType)
         co +=1
     return co
+
 
 def repartirAlgues(nb, rotation, colo):
     gAlgue = dessAlgue(
@@ -212,8 +199,11 @@ def repartirAlgues(nb, rotation, colo):
         cmds.floatSliderGrp(UIproportionMax, q=True, value=True)
     )
     colorierAlgue(gAlgue, colo)
+    print("groupe algue = " +str(gAlgue))
 
-    grpAnimVague.append(Repartition(gAlgue,'fond', nb, rotation, 0.05, 0.05))
+    for i in range (0,nb):
+        grpAnimVague.append(Repartition(gAlgue,'fond', 1, rotation, 0.05, 0.05, False))
+    #cmds.delete(gAlgue)
 
 
 #__________________________coloration _______________________________________
@@ -227,14 +217,14 @@ def ApplyColor(nom, colo, emission):
     cmds.select(nom+"*",  hi=True, add=True)
     cmds.hyperShade(assign=mat)
 
+
 #__________________________clean la scene____________________________________
 def clean():
     cmds.file(f=True, new=True)
     count = 0
 
 
-
-#__________INTERFACE _________
+#////////////////////// INTERFACE //////////////////////
 cmds.window(w=450,title="SeaBed Generator")
 
 form = cmds.formLayout(w=1920,h=1080)
@@ -243,13 +233,10 @@ tabs = cmds.tabLayout(borderStyle="none",w=450,h=1000)
 cmds.formLayout( form, edit=True, attachForm=((tabs, 'left', 15)) )
 
 
-#//////////////////////TAB1//////////////#
-
-
+#////////////////////// TAB1 //////////////////////
 child1 = cmds.scrollLayout(w=300)
 
 #------Field-----#
-
 cmds.text(label="Generate the field of your seabed.", font='boldLabelFont',h=50,align="center")
 
 field_strenth = cmds.floatSliderGrp(field=True,label="Strenth",minValue=0,maxValue=3,value=1.5,w=400)
@@ -262,12 +249,10 @@ cmds.button(label="Field",c="Fond(couleurs, cmds.floatSliderGrp(field_strenth,q=
 
 
 #------Rocks-----#
-
 cmds.separator(h=20, style="none")
 cmds.separator(h=10,w=400)
 cmds.text(label="Place some rocks.", font='boldLabelFont',h=50)
 
-#Sources image a changer
 cmds.image(image= pathVignettes+"Rochers.png")
 cmds.separator(h=20, style="none")
 
@@ -283,12 +268,10 @@ cmds.button(label="Rocks", c="repartirRochers(cmds.intSliderGrp(rock_number, q=T
 
 
 #------Shells-----#
-
 cmds.separator(h=20, style="none")
 cmds.separator(h=10,w=400)
 cmds.text(label="Place some shells.", font='boldLabelFont',h=50)
 
-#Sources image a changer
 cmds.image(image= pathVignettes + "Coquillage.png")
 cmds.separator(h=20, style="none")
 
@@ -304,14 +287,10 @@ cmds.button(label="Shells",c="repartirCoquillages(cmds.intSliderGrp(shell_number
 
 
 #------Sea Urchin-----#
-
-
-
 cmds.separator(h=20, style="none")
 cmds.separator(h=10,w=400)
 cmds.text(label="Place some sea urchin.", font='boldLabelFont',h=50)
 
-#Sources image a changer
 cmds.image(image= pathVignettes + "Oursin.png")
 cmds.separator(h=20, style="none")
 
@@ -325,27 +304,15 @@ cmds.separator(h=10, style="none")
 cmds.button(label="Choose Color",c="couleurs=Color()",bgc=[0.2,0.2,0.2],w=400)
 cmds.button(label="Sea Urchin",c="repartirOursins(cmds.intSliderGrp(urchin_number, q=True, value=True),cmds.floatSliderGrp(urchin_rotate, q=True, value=True),cmds.floatSliderGrp(urchin_min, q=True, value=True),cmds.floatSliderGrp(urchin_max, q=True, value=True), couleurs)",h=40,w=400)
 
-
-
 cmds.setParent( '..' )
 
 
-
-
-#//////////////////////TAB2//////////////#
-
-
+#////////////////////// TAB2 //////////////////////
 child2 = cmds.scrollLayout(w=300)
 
-
-
 #------StarFish-----#
-
-
-
 cmds.text(label="Place some starfish on the rocks.", font='boldLabelFont',h=50)
 
-#Sources image a changer
 cmds.image(image= pathVignettes + "EtoileDeMer.png")
 cmds.separator(h=20, style="none")
 
@@ -360,17 +327,14 @@ cmds.button(label="Starfish",c="repartirEtoiles(cmds.intSliderGrp(star_number, q
 
 
 #------Coral#1-----#
-
 cmds.separator(h=20, style="none")
 cmds.separator(h=10,w=400)
 cmds.text(label="Place some Corals.", font='boldLabelFont',h=50)
 
-#Sources image a changer
 cmds.image(image= pathVignettes + "Coraux1.png")
 cmds.separator(h=20, style="none")
 
 coral_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=20,value=6,w=400)
-#coral_density = cmds.intSliderGrp(field=True,label="Density",minValue=0,maxValue=10,value=3,w=400)
 coral1_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=1,value=0.7,w=400)
 coral1_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=1,value=1,w=400)
 coral_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
@@ -381,17 +345,14 @@ cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
 cmds.button(label="Coral#1",c="repartirCorauxCone(cmds.intSliderGrp(coral_number, q=True, value=True),cmds.floatSliderGrp(coral_rotate, q=True, value=True), cmds.floatSliderGrp(coral1_min, q=True, value=True),cmds.floatSliderGrp(coral1_max, q=True, value=True), couleurs)",h=40,w=400)
 
 #------Coral#2-----#
-
 cmds.separator(h=20, style="none")
 cmds.separator(h=10,w=400)
 cmds.text(label="Place some Corals.", font='boldLabelFont',h=50)
 
-#Sources image a changer
 cmds.image(image= pathVignettes + "Coraux2.png")
 cmds.separator(h=20, style="none")
 
 coral2_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=20,value=6,w=400)
-#coral2_density = cmds.intSliderGrp(field=True,label="Density",minValue=0,maxValue=10,value=3,w=400)
 coral2_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=1,value=0.5,w=400)
 coral2_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=1,value=0.8,w=400)
 coral2_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
@@ -401,17 +362,11 @@ cmds.separator(h=10, style="none")
 cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
 cmds.button(label="Coral#2",c="repartirCorauxPhone(cmds.intSliderGrp(coral2_number, q=True, value=True),cmds.floatSliderGrp(coral2_rotate, q=True, value=True),cmds.floatSliderGrp(coral2_min, q=True, value=True),cmds.floatSliderGrp(coral2_max, q=True, value=True), couleurs)",h=40,w=400)
 
-
 cmds.setParent( '..' )
 
 
-
-
 #//////////////////////TAB3/////////////////#
-
 child3 = cmds.scrollLayout(w=300)
-#cmds.iconTextRadioCollection( "itRadCollection" )
-
 
 #------Fish-----#
 cmds.separator(h=15, style="none")
@@ -421,9 +376,7 @@ cmds.text(label="Generate Shoal. ", font='boldLabelFont',h=50)
 cmds.separator(h=10, style="none")
 cmds.rowColumnLayout(numberOfColumns=2,cw=[(1,200),(2,200)])
 
-
-typeFishI=cmds.iconTextRadioCollection( 'fishCollection10' ) #il faudrait soit faire sans, donc via une autre
-#maniere de mettre en forme les bouttons, soit vérifier si le nom de l'objet existe avec un objExists(fishCollection) ?
+typeFishI=cmds.iconTextRadioCollection( 'fishCollection10' )
 fleche=cmds.iconTextRadioButton( st='iconOnly', i1= pathVignettes +'PoissonFleche.png', l='fleche')
 long=cmds.iconTextRadioButton( st='iconOnly', i1= pathVignettes+'PoissonLong.png', l='long')
 
@@ -445,11 +398,7 @@ cmds.button(label="Shoal", c="count = repartirPoissons(count, couleurs, cmds.int
 cmds.separator(h=30, style="none")
 cmds.separator(h=10,w=400)
 
-
-
-
 #------Algae-----#
-
 cmds.separator(h=30, style="none")
 cmds.rowColumnLayout(numberOfColumns=2,cw=[(1,380),(2,20)])
 
@@ -503,7 +452,8 @@ cmds.setParent( '..' )
 
 cmds.setParent( '..' )
 
-#//////////////////////TAB4//////////////#
+
+#////////////////////// TAB4 //////////////////////
 child4 = cmds.scrollLayout(w=400)
 
 cmds.separator(h=30, style="none")
@@ -519,7 +469,7 @@ cmds.button(label="Waves", c="boutonAnimerVagues(grpAnimVague, cmds.floatSliderG
 
 cmds.setParent( '..' )
 
-#//////////////////////TAB5//////////////#
+#////////////////////// TAB5 //////////////////////
 child5 = cmds.scrollLayout(w=400)
 
 cmds.separator(h=30, style="none")
@@ -532,23 +482,18 @@ cmds.button(label="Camera",c="SetupCamera()",bgc=[0.2,0.2,0.2],w=400)
 cmds.separator(h=10, style="none")
 cmds.button(label="Render",c="RenderView() ",w=400,h=100)
 
-
-
 cmds.setParent( '..' )
 cmds.setParent( '..' )
-
-
-
 
 
 def Color():
-
     couleurEditor=cmds.colorEditor()
     couleur = cmds.colorEditor(q=True, rgb=True)
     R=couleur[0]
     V=couleur[1]
     B=couleur[2]
     return R,V,B
+
 
 def AlgaeExp():
     cmds.window(h=280,w=560,title="Information Algae settings")
@@ -581,7 +526,6 @@ def AlgaeExp():
 
 
 def SetupLighting() :
-
 	#creation lumiere ambiante
 	mutils.createLocator("aiAreaLight", asLight=True)
 	lum1 = cmds.rename("LumiereAmbiante")
@@ -598,6 +542,7 @@ def SetupLighting() :
 	cmds.setAttr(lum2+".color", 1, 0.66, 0.44)
 	cmds.setAttr(lum2+".intensity", 100)
 
+
 def SetupCamera() :
 	cam = cmds.camera()
 	cmds.lookThru(cam[0])
@@ -611,10 +556,12 @@ def SetupCamera() :
 	cmds.move(24.026, 15.354, 21.047)
 	cmds.renderSettings(cam=cam[1])
 
+
 def RenderView() :
     core.createOptions()
     cmds.arnoldRenderView(mode ="open")
     cmds.arnoldRenderView()
+
 
 cmds.tabLayout( tabs, edit=True, tabLabel=((child1, "Field / Details"), (child2, "Starfish / Corals"), (child3, "Fish / Algae"), (child4, "Animation"), (child5, "Render")) )
 cmds.setParent( '..' )
