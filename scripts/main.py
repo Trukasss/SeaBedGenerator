@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import maya.cmds as cmds
 import random
 import math
@@ -8,33 +9,25 @@ import mtoa.core as core
 #__________________ nos codes __________________
 from SeaBedGenerator.scripts import imports
 reload(imports)
-from SeaBedGenerator.scripts import Sol
-reload(Sol)
-from SeaBedGenerator.scripts import fish
-reload(fish)
-from SeaBedGenerator.scripts import Algues
-from SeaBedGenerator.scripts.Algues import *
-reload(Algues)
-from SeaBedGenerator.scripts import RepartitionCode
-from SeaBedGenerator.scripts.RepartitionCode import *
-reload(RepartitionCode)
+from SeaBedGenerator.scripts.Sol import Fond
+from SeaBedGenerator.scripts.fish import shoal
+from SeaBedGenerator.scripts.Algues import dessAlgue, colorierAlgue
+from SeaBedGenerator.scripts.RepartitionCode import Repartition
 from SeaBedGenerator.scripts import Animation
 reload(Animation)
 
 
 cmds.file(f=True, new=True)
 
-# __________________ d�finition de variables globales _______________________
+# __________________ definition de variables globales _______________________
 count = 0 #nombre de fois qu'on clique sur "create shoal"
 
 #J'ai rentre le chemin d'acces dans une variable string. Maintenant il suffit de changer l'endroit qu'une seule fois.
 pathVignettes = cmds.internalVar(usd=True)+"SeaBedGenerator/Vignettes/"
-
-pathImport= cmds.internalVar(usd=True)+"SeaBedGenerator/Models/" #chemins jusqu'au FBX
-
+pathImport= cmds.internalVar(usd=True)+"SeaBedGenerator/Models/"
 grpAnimVague = []
 
-#__________imports_________   #mettre les bons chemins
+#__________imports_________
 #param = le nom du FBX
 def setImport(nomAsset):
     setImportPath = pathImport + nomAsset
@@ -191,10 +184,34 @@ def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo):
 
     ApplyColor("CorailPhone", colo, 0.2)
 
+def repartirPoissons(co, colo, ShoalNumber, nbFish, typeFishRadio, espacementFish, scaleFish):
+    if (typeFishRadio== 2): # = le poisson long
+        setImport("PoissonLong.fbx")
+        nomType = "PoissonLong"
+    if (typeFishRadio== 1): # = le poisson rong
+        setImport("PoissonFleche.fbx")
+        nomType = "PoissonFleche"
+    
+    for i in range(0, ShoalNumber):
+        shoal(co, colo, nbFish, espacementFish, scaleFish, nomType)
+        co +=1
+    return co
+
 def repartirAlgues(nb, rotation, colo):
-    gAlgue = dessAlgue()
+    gAlgue = dessAlgue(
+        cmds.radioButtonGrp(UIembout, q=True, select=True),
+        cmds.floatSliderGrp(UIpuissance, q=True, value=True),
+        cmds.floatSliderGrp(UItailleMin, q=True, value=True),
+        cmds.floatSliderGrp(UItailleMax, q=True, value=True),
+        cmds.floatSliderGrp(UIepaisseur, q=True, value=True), 
+        cmds.intSliderGrp(UInbBranchesMin, q=True, value=True), 
+        cmds.intSliderGrp(UInbBranchesMax, q=True, value=True), 
+        cmds.intSliderGrp(UInbSousBranchesMin, q=True, value=True), 
+        cmds.intSliderGrp(UInbSousBranchesMax, q=True, value=True), 
+        cmds.floatSliderGrp(UIproportionMin, q=True, value=True), 
+        cmds.floatSliderGrp(UIproportionMax, q=True, value=True)
+    )
     colorierAlgue(gAlgue, colo)
-    print("groupe des algues =", gAlgue)
 
     grpAnimVague.append(Repartition(gAlgue,'fond', nb, rotation, 0.05, 0.05))
 
@@ -241,7 +258,7 @@ field_amplitude = cmds.floatSliderGrp(field=True,label="Amplitude",minValue=0,ma
 cmds.separator(h=10, style="none")
 
 cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
-cmds.button(label="Field",c="Fond(couleurs)", w=400,h=40,al="right")
+cmds.button(label="Field",c="Fond(couleurs, cmds.floatSliderGrp(field_strenth,q=True,v=True), cmds.floatSliderGrp(field_frequency,q=True,v=True), cmds.floatSliderGrp(field_amplitude,q=True,v=True))", w=400,h=40,al="right")
 
 
 #------Rocks-----#
@@ -413,7 +430,7 @@ long=cmds.iconTextRadioButton( st='iconOnly', i1= pathVignettes+'PoissonLong.png
 cmds.setParent("..")
 cmds.separator(h=20, style="none")
 
-typeFish = cmds.radioButtonGrp(numberOfRadioButtons=2, label='Type of fish', labelArray2=['Arrow One', 'Long One'] )
+typeFish = cmds.radioButtonGrp(numberOfRadioButtons=2, label='Type of fish', labelArray2=['Arrow One', 'Long One'], select=2)
 SliderScaleFishy = cmds.floatSliderGrp(field=True,label="Fish Scale",minValue=0.2,maxValue=1,value=0.5,w=400)
 SliderNbFish = cmds.intSliderGrp(field=True,label="Fish per Shoal",minValue=4,maxValue=20,value=6,w=400)
 SliderEspaceFish = cmds.floatSliderGrp(field=True,label="Space between Fish",minValue=3,maxValue=6,value=3.5,w=400)
@@ -423,7 +440,7 @@ cmds.separator(h=30, style="none")
 
 cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
 
-cmds.button(label="Shoal", c="count = multiple(count, couleurs)",h=40,w=400)
+cmds.button(label="Shoal", c="count = repartirPoissons(count, couleurs, cmds.intSliderGrp(SliderNbShoal, q=True, value=True), cmds.intSliderGrp(SliderNbFish, q=True, value=True), cmds.radioButtonGrp(typeFish, q=True, select=True), cmds.floatSliderGrp(SliderEspaceFish, q=True, value=True), cmds.floatSliderGrp(SliderScaleFishy, q=True, value=True))",h=40,w=400)
 
 cmds.separator(h=30, style="none")
 cmds.separator(h=10,w=400)
@@ -531,7 +548,6 @@ def Color():
     R=couleur[0]
     V=couleur[1]
     B=couleur[2]
-    print(R,V,B)
     return R,V,B
 
 def AlgaeExp():
