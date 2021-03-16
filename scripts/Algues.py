@@ -115,20 +115,7 @@ def colorierAlgue(g_main, colo):
 # -------------------- Definision fonction dessAlgue --------------------
 #Parametres : 
 
-def dessAlgue():
-   #recuperation des valeurs
-	embout = cmds.radioButtonGrp(UIembout, q=True, select=True)
-	puissance = cmds.floatSliderGrp(UIpuissance, q=True, value=True)
-	tailleMin = cmds.floatSliderGrp(UItailleMin, q=True, value=True)
-	tailleMax = cmds.floatSliderGrp(UItailleMax, q=True, value=True)	
-	epaisseur = cmds.floatSliderGrp(UIepaisseur, q=True, value=True)	
-	nbBranchesMin = cmds.intSliderGrp(UInbBranchesMin, q=True, value=True)
-	nbBranchesMax = cmds.intSliderGrp(UInbBranchesMax, q=True, value=True)
-	nbSousBranchesMin = cmds.intSliderGrp(UInbSousBranchesMin, q=True, value=True)
-	nbSousBranchesMax = cmds.intSliderGrp(UInbSousBranchesMax, q=True, value=True)
-	proportionMin = cmds.floatSliderGrp(UIproportionMin, q=True, value=True)
-	proportionMax = cmds.floatSliderGrp(UIproportionMax, q=True, value=True)
-	
+def dessAlgue(embout, puissance, tailleMin, tailleMax, epaisseur, nbBranchesMin, nbBranchesMax, nbSousBranchesMin, nbSousBranchesMax, proportionMin, proportionMax):
 	#conversion de certaines valeurs	
 	taille = random.uniform(tailleMin, tailleMax)
 	taille /= 10
