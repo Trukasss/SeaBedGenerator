@@ -61,7 +61,6 @@ def Repartition(obj,target,quantity,rotation,scale_min, scale_max):
     
     cmds.delete("grLocators") #*|*"
     cmds.delete(obj)
-    print ("g = " +str(g))
     return g
 
 # ------------------ INTERFACE ------------------
