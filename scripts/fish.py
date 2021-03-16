@@ -1,44 +1,20 @@
 # -*- coding: utf-8 -*-
 import maya.cmds as cmds
 import random as rand
-from SeaBedGenerator.scripts import RepartitionCode
-reload(RepartitionCode)
-
-#clear scenes
-cmds.file(f=True, new=True)
+#from SeaBedGenerator.scripts.main import setImport
+# from SeaBedGenerator.scripts import RepartitionCode
+# reload(RepartitionCode)
 
 #variable globale
 count = 0 #nombre de fois ou on clique sur "create shoal"
 
 
-def shoal(n, colo):
-    #---- declaration des var-----
-    nbFish = cmds.intSliderGrp(SliderNbFish, q=True, value=True)
-    typeFishRadio = cmds.radioButtonGrp(typeFish, q=True, select=True)
-    
-
+def shoal(n, colo, nbFish, espacementFish, scaleFish, nomType):
     lar = 14 #taille du terrain qui variera en fonction du terrain
     long = 14
     
-    espacementFish = cmds.floatSliderGrp(SliderEspaceFish, q=True, value=True)
-    
-    scaleFish = cmds.floatSliderGrp(SliderScaleFishy, q=True, value=True)
-    
-    #---------------- IMPORT ---------------
-    #________definir les type de poissons_________
-    if (typeFishRadio== 2): # = le poisson long
-        print('loong')
-        setImport("PoissonLong.fbx")
-        nomType = "PoissonLong"
-    if (typeFishRadio== 1): # = le poisson rong
-        setImport("PoissonFleche.fbx")
-        nomType = "PoissonFleche"
-        print('fleche')
-        
-   
-        
     #groupe qui regroupe les poissons du bancs 
-    cmds.group(em=True, n="grp_fishy"+str(n))
+    grFish = cmds.group(em=True, n="grp_fishy"+str(n))
     
     #generation de plusieurs fish 
     for i in range(0,nbFish):
@@ -49,12 +25,12 @@ def shoal(n, colo):
        cmds.rotate(rand.uniform(-20,20),rand.uniform(-20,20),0, nomType)
        cmds.scale(scaleFish,scaleFish,scaleFish,nomType) 
        f = cmds.instance(nomType, leaf=True)
-       cmds.parent( f, 'grp_fishy'+str(n))
+       cmds.parent( f, grFish)
        
     #------------ REPARTITION ici -------------------
     randomY = rand.uniform(4,8) #?gerer la hauteur
-    cmds.move(rand.uniform(-lar/2,lar/2),randomY,rand.uniform(-long/2,long/2), 'grp_fishy'+str(n)) #repartition dans l'espace sur un plan
-    cmds.rotate(rand.uniform(-15,15),rand.uniform(-180,180),0, 'grp_fishy'+str(n))
+    cmds.move(rand.uniform(-lar/2,lar/2),randomY,rand.uniform(-long/2,long/2), grFish) #repartition dans l'espace sur un plan
+    cmds.rotate(rand.uniform(-15,15),rand.uniform(-180,180),0, grFish)
    
     
     cmds.select(nomType)
@@ -62,15 +38,6 @@ def shoal(n, colo):
     
     applyColor(nomType, colo)
 
-def multiple(co, colo):
-    ShoalNumber = cmds.intSliderGrp(SliderNbShoal, q=True, value=True)
-    for i in range(0, ShoalNumber):
-        shoal(co, colo)
-        co=co+1
-    return co
-        
-
-     
 def applyMaterial(obj, r, g, b):
     if cmds.objExists(obj):
         shd = cmds.shadingNode('blinn', name=obj + "_lambert", asShader=True)
