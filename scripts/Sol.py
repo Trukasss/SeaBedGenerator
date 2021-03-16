@@ -3,13 +3,12 @@ import maya.cmds as cmds
 
 #cmds.file(f=True,new=True)
 
-def Fond(colors):
-    print(colors)
+def Fond(colors, Stre, Freq, Ampl):
     cmds.file(f=True,new=True)
 
-    Stre=cmds.floatSliderGrp(field_strenth,q=True,v=True)
-    Freq=cmds.floatSliderGrp(field_frequency,q=True,v=True)
-    Ampl=cmds.floatSliderGrp(field_amplitude,q=True,v=True)
+    # Stre=cmds.floatSliderGrp(field_strenth,q=True,v=True)
+    # Freq=cmds.floatSliderGrp(field_frequency,q=True,v=True)
+    # Ampl=cmds.floatSliderGrp(field_amplitude,q=True,v=True)
 
     #---------Creation Objet--------#
     cmds.polyCube(w=20,d=20,h=8,sx=80,sz=80,name="roche") #20 20 / 50
