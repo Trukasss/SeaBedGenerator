@@ -7,32 +7,38 @@ import random
 
 #_______________________ ANIMATION DEFORMEUR _______________________#
 
-#Variable globale avec le nom du deformeur
-nDeform = "waveDeform"
-
 #Fonction qui permet de creer un le deformeur wave avec deux parametres facultatifs ou de changer ces deux parametres si le deformeur existe deja.
-def deformation(amplitude, maxRadius):
-    global nDeform
-    if (not cmds.objExists(nDeform)):
-        maya.internal.common.cmd.base.executeCommand('wave.cmd_create')
-        cmds.deformer("wave1", e=True, n=nDeform)
-    cmds.setAttr(nDeform+".amplitude", amplitude)
-    cmds.setAttr(nDeform+".maxRadius", maxRadius)
+def deformation(amplitude, wavelenght, nomDeform ="sineDeform", effet="sine"):
+    if (not cmds.objExists(nomDeform)):
+        maya.internal.common.cmd.base.executeCommand(effet+'.cmd_create')
+        rDeform = cmds.ls(sl=True, fl=True) #on recupere le handle en premier puis le deformer
+        cmds.deformer(rDeform[1], e=True, n=nomDeform)
+        cmds.move(0, 7, 0, rDeform[0])
+        cmds.rotate(0, 0, 180, rDeform[0])
+        cmds.scale(1, 1, 1, rDeform[0])
+    else:
+        print("nomDeformer deja existant")
+
+    cmds.setAttr(nomDeform+".amplitude", amplitude)
+    cmds.setAttr(nomDeform+".wavelength", wavelenght)
+    cmds.setAttr(nomDeform+".dropoff", 1)
+    cmds.setAttr(nomDeform+".lowBound", 0)
+    cmds.setAttr(nomDeform+".highBound", 7)
+    return nomDeform
 
 #Fonction qui permet d'animer l'offset du deformeur du meme nom, en le liant via une expression au temps.
 #Le rapport est divise par un parametre (par default 100) lenteur qui divise le temps par la valeur indiquee.
-def animerDeformation(lenteur):
-    global nDeform
-    nom = "waveDeformExpression"
+def animerDeformation(lenteur, nomDeform):
+    nom = str(nomDeform) +"_Expression"
     if(not cmds.objExists(nom)):
-        cmds.expression(n = nom, s= nDeform+".offset = time1.outTime/"+str(lenteur))
+        cmds.expression(n = nom, s= nomDeform+".offset = time1.outTime/"+str(lenteur))
     else:
-        cmds.expression(nom, e=True, s= nDeform+".offset = time1.outTime/"+str(lenteur))
+        cmds.expression(nom, e=True, s= nomDeform+".offset = time1.outTime/"+str(lenteur))
 
-def boutonAnimerVagues(grpAnimVague, amplitude=0.05, maxRadius=1.5, lenteur=100):
+def boutonAnimerVagues(grpAnimVague, amplitude=0.05, maxRadius=1.5, lenteur=20):
     cmds.select(grpAnimVague)
-    deformation(amplitude, maxRadius)
-    animerDeformation(lenteur)
+    rDef = deformation(amplitude, maxRadius)
+    animerDeformation(lenteur, rDef)
 
 #_______________________ ANIMATION BOIDS _______________________#
 class poissonBoid:
@@ -125,7 +131,6 @@ class poissonBoid:
     # (MOUVEMENT BASE)
     def nager(self):
         cmds.move(0, self.vitNag, 0, self.rBoid, r=True, os=True)
-        #print("poisson nage a cette vitesse = " +str(self.vitNag))
 
     # (BOID:COHESION)
     def boidCohSep(self):#, pA, pB, dis, vecNormAB, vit=1.0, disTol=30.0):
@@ -215,9 +220,9 @@ def lancerSimulation(rPoissons, duree):
             cmds.setKeyframe(p.rBoid, at=["tx", "ty", "tz", "rx", "ry", "rz"], t=i)
             poissonBoid.simuler(p)
 
-cmds.autoKeyframe(state=True)
-rPoissons = creerPoissons(20)
-lancerSimulation(rPoissons, 200)
+# cmds.autoKeyframe(state=True)
+# rPoissons = creerPoissons(20)
+# lancerSimulation(rPoissons, 50)
 
 # p1 = poissonBoid("poissonTest")
 # p2 = poissonBoid("poissonTesteuuuuh")
