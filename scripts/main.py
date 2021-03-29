@@ -460,12 +460,13 @@ cmds.separator(h=30, style="none")
 cmds.text(label="Animate your scene.", font='boldLabelFont',h=20,w=400)
 cmds.separator(h=30, style="none")
 
-vague_amplitude = cmds.floatSliderGrp(field=True, label='Amplitude', minValue=0.001, maxValue=0.10, value=0.01, step=0.001, w=400)
-vague_lenteur = cmds.floatSliderGrp(field=True, label='Lenteur', minValue=1.5, maxValue=200, value=100, step=0.5, w=400)
+vague_amplitude = cmds.floatSliderGrp(field=True, label='Amplitude', minValue=0.0, maxValue=1.0, value=0.3, step=0.05, w=400)
+vague_wavelength = cmds.floatSliderGrp(field=True, label='Frequence', minValue=0.0, maxValue=10.0, value=4.3, step=0.1, w=400)
+vague_lenteur = cmds.floatSliderGrp(field=True, label='Lenteur', minValue=0.0, maxValue=100, value=20, step=0.5, w=400)
 
 cmds.separator(h=3, style="none")
 
-cmds.button(label="Waves", c="boutonAnimerVagues(grpAnimVague, cmds.floatSliderGrp(vague_amplitude, q=True, value=True), 1.5, cmds.floatSliderGrp(vague_lenteur, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Waves", c="boutonAnimerVagues(grpAnimVague, cmds.floatSliderGrp(vague_amplitude, q=True, value=True), cmds.floatSliderGrp(vague_wavelength, q=True, value=True), cmds.floatSliderGrp(vague_lenteur, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
 
 cmds.setParent( '..' )
 
