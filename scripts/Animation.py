@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import math
 import maya.cmds as cmds
 import maya.internal.common.cmd.base
+import math
+import random
 
 
 #_______________________ ANIMATION DEFORMEUR _______________________#
@@ -36,16 +37,19 @@ def boutonAnimerVagues(grpAnimVague, amplitude=0.05, maxRadius=1.5, lenteur=100)
 #_______________________ ANIMATION BOIDS _______________________#
 class poissonBoid:
     "Classe de poisson se deplacant de maniere boidienne"
-    #Variables de classe:
-    rBoid = "temp"
-    raySep = 5.0
-    rayAli = 10.0
-    rayCoh = 15.0
-    vitNag = 0.5
-    vitSep = 0.5
-    vitCoh = 0.0
-    vitOri = 0.1
-    listeBoids = []
+    #VARIABLES DE CLASSE:
+    rBoid = "temp" #Reference du mesh (objet maya) dans la scene
+    listeBoids = [] #Liste de tous les objets de cette classe
+
+    rayCoh = 15 #Rayon a partir du quel les poissons font la COHESION
+    rayAli = 10 #Rayon a partir du quel les poissons font la ALIGNEMENT
+    raySep = 5 #Rayon a partir du quel les poissons font la SEPARATION
+
+    vitNag = 0.5 #Vitesse (en unite maya), d'avancement du poisson
+    puiCoh = 0.0 #/!\ Laisser a 0 #Puissance d'orientation (% de 0 a 1), vers le centre des voisins
+    accCoh = 0.01 #Pourcentage d'augmentation de la puissance d'orientation vers ce centre
+    accSep = 0.02 #Pourcentage de reduction de la puissance d'orientation vers ce centre (peut aller dans le negatif)
+    accAli = 10 #Angle de rotation pour l'alignement d'orientation
 
     def __init__(self, nom="boid"):
         self.rBoid = cmds.polyCone(n=nom, axis=(0,1,0))
@@ -120,23 +124,11 @@ class poissonBoid:
 
     # (MOUVEMENT BASE)
     def nager(self):
-        cmds.move(0, self.vitNag,0, self.rBoid, r=True, os=True)
-
-    # (BOID:SEPARATION) 
-    # def boidSep(self, pA, pB, dis, vecNormAB, vit=1.0, disTol=10.0):
-    #     if(dis < disTol):
-    #         courbe = self.ralentQuad(dis, vit, disTol)
-    #         cmds.move(
-    #             -vecNormAB[0]*courbe, 
-    #             -vecNormAB[1]*courbe, 
-    #             -vecNormAB[2]*courbe, 
-    #             self.rBoid, r=True)
-    #         print("dirAB = " +str(vecNormAB))
-    #     else:
-    #         print("trop loin")
+        cmds.move(0, self.vitNag, 0, self.rBoid, r=True, os=True)
+        #print("poisson nage a cette vitesse = " +str(self.vitNag))
 
     # (BOID:COHESION)
-    def boidCoh(self):#, pA, pB, dis, vecNormAB, vit=1.0, disTol=30.0):
+    def boidCohSep(self):#, pA, pB, dis, vecNormAB, vit=1.0, disTol=30.0):
         #VARIABLES
         voisins = self.getVoisins(self.rayCoh)
         nomLoc = "groupeCohesion_" +self.rBoid[0]
@@ -153,6 +145,7 @@ class poissonBoid:
             if (not cmds.objExists(nomLoc)):
                 cmds.spaceLocator(n= nomLoc)
             cmds.move(posMoy[0], posMoy[1], posMoy[2], nomLoc)
+            cmds.setKeyframe(nomLoc, at=["tx", "ty", "tz"])
 
             #CONTRAINTE
             if (not cmds.objExists(nomCon)):
@@ -160,14 +153,14 @@ class poissonBoid:
             
             #ORIENTATION
             if ( self.getDis( self.getPos(self.rBoid), self.getPos(nomLoc)) < self.raySep):
-                self.vitCoh -= self.vitOri
+                self.puiCoh -= self.accCoh
             else:
-                self.vitCoh += self.vitOri
-            cmds.setAttr(self.rBoid[0] +".blendAim1", self.vitCoh)
+                self.puiCoh += self.accSep
+            cmds.setAttr(self.rBoid[0] +".blendAim1", self.puiCoh)
             cmds.setKeyframe(self.rBoid, at=".blendAim1")
         #SEUL
         else:
-            self.vitCoh = 0
+            self.puiCoh = 0
             if (cmds.objExists(nomLoc)):
                 cmds.delete(nomLoc)
             if (cmds.objExists(nomCon)):
@@ -177,7 +170,7 @@ class poissonBoid:
 
     # (BOID:ALIGNEMENT)
     def boidAli(self):
-        voisins = self.getVoisins(100)# self.rayAli)
+        voisins = self.getVoisins(self.rayAli)
         if (len(voisins) > 0):
             oriVoisins = []
             for v in voisins:
@@ -186,12 +179,12 @@ class poissonBoid:
 
             oriIni = self.getAngle(self.rBoid)
             for r in range(0, len(oriIni)):
-                if oriIni[r]+self.vitOri < oriMoy[r]:
-                    oriIni[r] += self.vitOri
+                if oriIni[r]+self.accAli < oriMoy[r]:
+                    oriIni[r] += self.accAli
                 elif oriIni[r] < oriMoy[r]:
                     oriIni[r] += oriMoy[r]-oriIni[r]
-                elif oriIni[r]-self.vitOri > oriMoy[r]:
-                    oriIni[r] -= self.vitOri
+                elif oriIni[r]-self.accAli > oriMoy[r]:
+                    oriIni[r] -= self.accAli
                 elif oriIni[r] > oriMoy[r]:
                     oriIni[r] -= oriIni[r]-oriMoy[r]
                 else:
@@ -199,34 +192,33 @@ class poissonBoid:
             cmds.rotate(oriIni[0], oriIni[1], oriIni[2], self.rBoid, a=True)
 
     # (LANCER SIMULATION)
-    def simuler(self, duree):
-        duree = int(duree)
-        for i in range(1, duree+1):
-            cmds.currentTime(i)
-            cmds.setKeyframe(self.rBoid, at=["tx", "ty", "tz", "rx", "ry", "rz"], t=i)
-
-
-            self.nager()
-            self.boidCoh()
-            self.boidAli()
-            # pA = getPos(sujet)
-            # pB = getPos(proche) 
-            # dis = getDis(pA, pB)
-            # vecNormAB = getVecNorm(pA, pB)
-            #boidSep(sujet, proche, pA, pB, dis, vecNormAB)
-            #boidCoh(sujet, proche, pA, pB, dis, vecNormAB)
+    def simuler(self):
+        self.nager()
+        self.boidAli()
+        self.boidCohSep()
 
 
 #--------------------------------------------------Scene--------------------------------------------------
 cmds.file(new=True, f=True)
 
+def creerPoissons(nb):
+    p = []
+    for i in range(0, nb):
+        p.append( poissonBoid("petitPoisson_" +str(i)) )
+        poissonBoid.placer(p[i], random.uniform(-10,10), random.uniform(-10,10), random.uniform(-10,10), 0, 0, 0)
+    return p
 
-p1 = poissonBoid("petitPoisson")
-#p2 = poissonBoid()
-#p3 = poissonBoid()
+def lancerSimulation(rPoissons, duree):
+    for i in range(1, duree+1):
+        cmds.currentTime(i)
+        for p in rPoissons:
+            cmds.setKeyframe(p.rBoid, at=["tx", "ty", "tz", "rx", "ry", "rz"], t=i)
+            poissonBoid.simuler(p)
 
-#poissonBoid.placer(p2, 3, 0, -3, 0, 0, 0)
-#poissonBoid.placer(p3, 6, 0, -4, 0, 0, 0)
-poissonBoid.simuler(p1, 100)
-#poissonBoid.simuler(p2, 100)
-#poissonBoid.simuler(p3, 100)
+cmds.autoKeyframe(state=True)
+rPoissons = creerPoissons(20)
+lancerSimulation(rPoissons, 200)
+
+# p1 = poissonBoid("poissonTest")
+# p2 = poissonBoid("poissonTesteuuuuh")
+# poissonBoid.simuler(p1)
