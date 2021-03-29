@@ -35,9 +35,9 @@ def animerDeformation(lenteur, nomDeform):
     else:
         cmds.expression(nom, e=True, s= nomDeform+".offset = time1.outTime/"+str(lenteur))
 
-def boutonAnimerVagues(grpAnimVague, amplitude=0.05, maxRadius=1.5, lenteur=20):
+def boutonAnimerVagues(grpAnimVague, amplitude=0.3, wavelenght=4.3, lenteur=20):
     cmds.select(grpAnimVague)
-    rDef = deformation(amplitude, maxRadius)
+    rDef = deformation(amplitude, wavelenght)
     animerDeformation(lenteur, rDef)
 
 #_______________________ ANIMATION BOIDS _______________________#
