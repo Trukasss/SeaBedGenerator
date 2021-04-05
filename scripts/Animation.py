@@ -164,12 +164,12 @@ class poissonBoid:
             cmds.setAttr(self.rBoid[0] +".blendAim1", self.puiCoh)
             cmds.setKeyframe(self.rBoid, at=".blendAim1")
         #SEUL
-        else:
-            self.puiCoh = 0
-            if (cmds.objExists(nomLoc)):
-                cmds.delete(nomLoc)
-            if (cmds.objExists(nomCon)):
-                cmds.delete(nomCon)
+        # else:
+        #     self.puiCoh = 0
+        #     if (cmds.objExists(nomLoc)):
+        #         cmds.delete(nomLoc)
+        #     if (cmds.objExists(nomCon)):
+        #         cmds.delete(nomCon)
 
 
 
@@ -203,9 +203,7 @@ class poissonBoid:
         self.boidCohSep()
 
 
-#--------------------------------------------------Scene--------------------------------------------------
-cmds.file(new=True, f=True)
-
+#--------------------------------------------------FONCTIONS POUR INTERFACE--------------------------------------------------
 def creerPoissons(nb):
     p = []
     for i in range(0, nb):
@@ -220,9 +218,26 @@ def lancerSimulation(rPoissons, duree):
             cmds.setKeyframe(p.rBoid, at=["tx", "ty", "tz", "rx", "ry", "rz"], t=i)
             poissonBoid.simuler(p)
 
+def cleanerAnimation(rPoissons):
+    courbesACleaner = []
+    for o in rPoissons:
+        nom = o.rBoid[0]
+        courbesACleaner.append(nom +".translateX")
+        courbesACleaner.append(nom +".translateY")
+        courbesACleaner.append(nom +".translateZ")
+        courbesACleaner.append(nom +".rotateX")
+        courbesACleaner.append(nom +".rotateY")
+        courbesACleaner.append(nom +".rotateZ")
+        courbesACleaner.append(nom +".blendAim1")
+    cmds.filterCurve(courbesACleaner, f="butterworth", cutoffFrequency = 1.5, samplingRate=24, keepKeysOnFrame=True)
+
+
+#--------------------------------------------------SCENE TEST--------------------------------------------------
+# cmds.file(new=True, f=True)
 # cmds.autoKeyframe(state=True)
-# rPoissons = creerPoissons(20)
-# lancerSimulation(rPoissons, 50)
+# rPoissons = creerPoissons(5)
+# lancerSimulation(rPoissons, 100)
+# cleanerAnimation(rPoissons)
 
 # p1 = poissonBoid("poissonTest")
 # p2 = poissonBoid("poissonTesteuuuuh")
