@@ -9,12 +9,12 @@ import random as rand
 count = 0 #nombre de fois ou on clique sur "create shoal"
 
 
-def shoal(n, colo, nbFish, espacementFish, scaleFish, nomType):
+def shoal(colo, nbFish, espacementFish, scaleFish, nomType):
     lar = 14 #taille du terrain qui variera en fonction du terrain
     long = 14
     
     #groupe qui regroupe les poissons du bancs 
-    grFish = cmds.group(em=True, n="grp_fishy"+str(n))
+    grFish = cmds.group(em=True, n="grp_fishy")
     
     #generation de plusieurs fish 
     for i in range(0,nbFish):

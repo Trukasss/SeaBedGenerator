@@ -29,10 +29,19 @@ from SeaBedGenerator.scripts.Animation import boutonAnimerVagues
 cmds.file(f=True, new=True)
 
 # __________________ definition de variables globales __________________
-count = 0 #nombre de fois qu'on clique sur "create shoal"
 pathVignettes = cmds.internalVar(usd=True)+"SeaBedGenerator/Vignettes/"
 pathImport= cmds.internalVar(usd=True)+"SeaBedGenerator/Models/"
 grpAnimVague = []
+
+coloGround={222,202,163}
+coloRocks={177,81,81}
+coloShells={131,206,196}
+coloUrchins={37,44,101}
+coloStarfish={224,156,89}
+coloCoral1 = {177,71,113}
+coloCoral2 = {89,111,172}
+coloFish = {145,111,158}
+coloAlgae = {25,117,113}
 
 #__________________ import __________________
 #param = le nom du FBX
@@ -41,8 +50,8 @@ def setImport(nomAsset):
     cmds.file(setImportPath, i=True, mergeNamespacesOnClash=True, namespace=':')
 
 
-# __________________ FONCTIONS pour importer �l�ments + appeler la r�partition des �l�ments __________________
-def repartirRochers(nb, rotation, scale_min, scale_max, colo):
+# __________________ FONCTIONS pour importer elements + appeler la repartition des elements __________________
+def repartirRochers(nb, rotation, scale_min, scale_max, colo={177,81,81}):
     if cmds.objExists("Rocher*"):
         cmds.delete("Rocher*")
     #-----import des rochers
@@ -71,7 +80,7 @@ def repartirRochers(nb, rotation, scale_min, scale_max, colo):
     ApplyColor("Rocher", colo, 0)
 
 
-def repartirCoquillages(nb, rotation, scale_min, scale_max, colo):
+def repartirCoquillages(nb, rotation, scale_min, scale_max, colo={131,206,196}):
     if cmds.objExists("Coquillage*"):
         cmds.delete("Coquillage*")
 
@@ -85,7 +94,7 @@ def repartirCoquillages(nb, rotation, scale_min, scale_max, colo):
     ApplyColor("Coquillage", colo, 0)
 
 
-def repartirOursins(nb, rotation,scale_min,scale_max, colo):
+def repartirOursins(nb, rotation,scale_min,scale_max, colo={37,44,101}):
     if cmds.objExists("Oursin*"):
         cmds.delete("Oursin*")
         #cmds.delete("grOursin*")
@@ -99,7 +108,7 @@ def repartirOursins(nb, rotation,scale_min,scale_max, colo):
     ApplyColor("Oursin", colo, 0)
 
 
-def repartirEtoiles(nb, rotation, scale_min, scale_max, colo):
+def repartirEtoiles(nb, rotation, scale_min, scale_max, colo={224,156,89}):
     if cmds.objExists("EtoileDeMer*"):
         cmds.delete("EtoileDeMer*")
     #-----import du mesh etoiles
@@ -107,13 +116,11 @@ def repartirEtoiles(nb, rotation, scale_min, scale_max, colo):
 
     #----- appel de la fonction de repartition
     Repartition('EtoileDeMer1','Rochers', nb-2-1, rotation, scale_min, scale_max)
-    #Repartition('EtoileDeMer1','Rocher_gros1', 2, rotation, scale_min, scale_max)
-    #Repartition('EtoileDeMer1','Rocher_moyen1', 1, rotation, scale_min, scale_max)
 
     ApplyColor("EtoileDeMer", colo, 0.4)
 
 
-def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo):
+def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo={177,71,113}):
     if cmds.objExists("CorailCone*"):
         cmds.delete("CorailCone*")
 
@@ -144,7 +151,7 @@ def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo):
     ApplyColor("CorailCone", colo, 0.2)
 
 
-def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo):
+def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo={89,111,172}):
     if cmds.objExists("CorailPhone*"):
         cmds.delete("CorailPhone*")
     #-----import des mesh coraux phone
@@ -170,21 +177,46 @@ def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo):
     ApplyColor("CorailPhone", colo, 0.2)
 
 
-def repartirPoissons(co, colo, ShoalNumber, nbFish, typeFishRadio, espacementFish, scaleFish):
+def repartirPoissons(nbFish, typeFishRadio, espacementFish, scaleFish, colo ={145,111,158}):
+    #// définir le nom du type de poisson
     if (typeFishRadio== 2): # = le poisson long
-        setImport("PoissonLong.fbx")
         nomType = "PoissonLong"
     if (typeFishRadio== 1): # = le poisson rong
-        setImport("PoissonFleche.fbx")
         nomType = "PoissonFleche"
     
-    for i in range(0, ShoalNumber):
-        shoal(co, colo, nbFish, espacementFish, scaleFish, nomType)
-        co +=1
-    return co
+    #shoal(colo, nbFish, espacementFish, scaleFish, nomType)
+    
+    cmds.autoKeyframe(state=True)
+    rPoissons = creerPoissons(nbFish,espacementFish,typeFishRadio, scaleFish)
+
+    #/// Colo spécifique du poisson 
+    #--- definition du nom du type de poisson a instancier ---
+    '''
+    Nag = cmds.shadingNode('aiStandardSurface', name="na", asShader=True)
+    cmds.setAttr(Nag+".baseColor", 0.87059,0.79216,0.63922)
+    cmds.setAttr(Nag+".specularRoughness", 0.8)
+    
+    Body = cmds.shadingNode('aiStandardSurface', name="bo", asShader=True)
+    cmds.setAttr(Body+".baseColor", colo[0], colo[1],colo[2])
+    cmds.setAttr(Body+".specularRoughness", 0.8)
+    cmds.setAttr(Body+".emission", 0.6)
+    cmds.setAttr(Body+".emissionColor", colo[0], colo[1],colo[2])
+    
+    #attribution poissons
+    cmds.select(nomType+"*|"+nomType+"_corps*",  hi=True, add=True)
+    cmds.hyperShade(assign=Nag)
+
+    
+    cmds.select(clear=True)
+    cmds.select(nomType+"*|"+nomType+"_nageoires*",  hi=True, add=True) 
+    cmds.hyperShade(assign=Body)
+    '''
+    return rPoissons
+    
 
 
-def repartirAlgues(nb, rotation, colo):
+
+def repartirAlgues(nb, rotation, colo= {25,117,113}):
     gAlgue = dessAlgue(
         cmds.radioButtonGrp(UIembout, q=True, select=True),
         cmds.floatSliderGrp(UIpuissance, q=True, value=True),
@@ -221,7 +253,6 @@ def ApplyColor(nom, colo, emission):
 #__________________________clean la scene____________________________________
 def clean():
     cmds.file(f=True, new=True)
-    count = 0
 
 
 #////////////////////// INTERFACE //////////////////////
@@ -244,8 +275,8 @@ field_frequency = cmds.floatSliderGrp(field=True,label="Frequency",minValue=0,ma
 field_amplitude = cmds.floatSliderGrp(field=True,label="Amplitude",minValue=0,maxValue=1,value=0.4,w=400)
 cmds.separator(h=10, style="none")
 
-cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
-cmds.button(label="Field",c="Fond(couleurs, cmds.floatSliderGrp(field_strenth,q=True,v=True), cmds.floatSliderGrp(field_frequency,q=True,v=True), cmds.floatSliderGrp(field_amplitude,q=True,v=True))", w=400,h=40,al="right")
+cmds.button(label="Choose Color",c="coloGround = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Field",c="Fond(cmds.floatSliderGrp(field_strenth,q=True,v=True), cmds.floatSliderGrp(field_frequency,q=True,v=True), cmds.floatSliderGrp(field_amplitude,q=True,v=True), coloGround)", w=400,h=40,al="right")
 
 
 #------Rocks-----#
@@ -263,8 +294,8 @@ rock_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValu
 
 cmds.separator(h=10, style="none")
 
-cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
-cmds.button(label="Rocks", c="repartirRochers(cmds.intSliderGrp(rock_number, q=True, value=True),cmds.floatSliderGrp(rock_rotate, q=True, value=True),cmds.floatSliderGrp(rock_min, q=True, value=True),cmds.floatSliderGrp(rock_max, q=True, value=True), couleurs)",h=40,w=400)
+cmds.button(label="Choose Color",c="coloRocks = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Rocks", c="repartirRochers(cmds.intSliderGrp(rock_number, q=True, value=True),cmds.floatSliderGrp(rock_rotate, q=True, value=True),cmds.floatSliderGrp(rock_min, q=True, value=True),cmds.floatSliderGrp(rock_max, q=True, value=True), coloRocks)",h=40,w=400)
 
 
 #------Shells-----#
@@ -282,8 +313,8 @@ shell_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxVal
 
 cmds.separator(h=10, style="none")
 
-cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
-cmds.button(label="Shells",c="repartirCoquillages(cmds.intSliderGrp(shell_number, q=True, value=True), cmds.floatSliderGrp(shell_rotate, q=True, value=True),cmds.floatSliderGrp(shell_min, q=True, value=True),cmds.floatSliderGrp(shell_max, q=True, value=True), couleurs)",h=40,w=400)
+cmds.button(label="Choose Color",c="coloShells = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Shells",c="repartirCoquillages(cmds.intSliderGrp(shell_number, q=True, value=True), cmds.floatSliderGrp(shell_rotate, q=True, value=True),cmds.floatSliderGrp(shell_min, q=True, value=True),cmds.floatSliderGrp(shell_max, q=True, value=True), coloShells)",h=40,w=400)
 
 
 #------Sea Urchin-----#
@@ -301,8 +332,8 @@ urchin_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxVa
 
 cmds.separator(h=10, style="none")
 
-cmds.button(label="Choose Color",c="couleurs=Color()",bgc=[0.2,0.2,0.2],w=400)
-cmds.button(label="Sea Urchin",c="repartirOursins(cmds.intSliderGrp(urchin_number, q=True, value=True),cmds.floatSliderGrp(urchin_rotate, q=True, value=True),cmds.floatSliderGrp(urchin_min, q=True, value=True),cmds.floatSliderGrp(urchin_max, q=True, value=True), couleurs)",h=40,w=400)
+cmds.button(label="Choose Color",c="coloUrchins = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Sea Urchin",c="repartirOursins(cmds.intSliderGrp(urchin_number, q=True, value=True),cmds.floatSliderGrp(urchin_rotate, q=True, value=True),cmds.floatSliderGrp(urchin_min, q=True, value=True),cmds.floatSliderGrp(urchin_max, q=True, value=True), coloUrchins)",h=40,w=400)
 
 cmds.setParent( '..' )
 
@@ -322,8 +353,8 @@ star_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=
 star_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
 cmds.separator(h=10, style="none")
 
-cmds.button(label="Choose Color",c="couleurs= Color()",bgc=[0.2,0.2,0.2],w=400)
-cmds.button(label="Starfish",c="repartirEtoiles(cmds.intSliderGrp(star_number, q=True, value=True),cmds.floatSliderGrp(star_rotate, q=True, value=True),cmds.floatSliderGrp(star_min, q=True, value=True),cmds.floatSliderGrp(star_max, q=True, value=True), couleurs)",h=40,w=400)
+cmds.button(label="Choose Color",c="coloStarfish = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Starfish",c="repartirEtoiles(cmds.intSliderGrp(star_number, q=True, value=True),cmds.floatSliderGrp(star_rotate, q=True, value=True),cmds.floatSliderGrp(star_min, q=True, value=True),cmds.floatSliderGrp(star_max, q=True, value=True), coloStarfish)",h=40,w=400)
 
 
 #------Coral#1-----#
@@ -341,8 +372,8 @@ coral_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxVal
 
 cmds.separator(h=10, style="none")
 
-cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
-cmds.button(label="Coral#1",c="repartirCorauxCone(cmds.intSliderGrp(coral_number, q=True, value=True),cmds.floatSliderGrp(coral_rotate, q=True, value=True), cmds.floatSliderGrp(coral1_min, q=True, value=True),cmds.floatSliderGrp(coral1_max, q=True, value=True), couleurs)",h=40,w=400)
+cmds.button(label="Choose Color",c="coloCoral1 = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Coral#1",c="repartirCorauxCone(cmds.intSliderGrp(coral_number, q=True, value=True),cmds.floatSliderGrp(coral_rotate, q=True, value=True), cmds.floatSliderGrp(coral1_min, q=True, value=True),cmds.floatSliderGrp(coral1_max, q=True, value=True), coloCoral1 )",h=40,w=400)
 
 #------Coral#2-----#
 cmds.separator(h=20, style="none")
@@ -359,8 +390,8 @@ coral2_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxVa
 
 cmds.separator(h=10, style="none")
 
-cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
-cmds.button(label="Coral#2",c="repartirCorauxPhone(cmds.intSliderGrp(coral2_number, q=True, value=True),cmds.floatSliderGrp(coral2_rotate, q=True, value=True),cmds.floatSliderGrp(coral2_min, q=True, value=True),cmds.floatSliderGrp(coral2_max, q=True, value=True), couleurs)",h=40,w=400)
+cmds.button(label="Choose Color",c="coloCoral2 = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Coral#2",c="repartirCorauxPhone(cmds.intSliderGrp(coral2_number, q=True, value=True),cmds.floatSliderGrp(coral2_rotate, q=True, value=True),cmds.floatSliderGrp(coral2_min, q=True, value=True),cmds.floatSliderGrp(coral2_max, q=True, value=True),coloCoral2)",h=40,w=400)
 
 cmds.setParent( '..' )
 
@@ -387,13 +418,12 @@ typeFish = cmds.radioButtonGrp(numberOfRadioButtons=2, label='Type of fish', lab
 SliderScaleFishy = cmds.floatSliderGrp(field=True,label="Fish Scale",minValue=0.2,maxValue=1,value=0.5,w=400)
 SliderNbFish = cmds.intSliderGrp(field=True,label="Fish per Shoal",minValue=4,maxValue=20,value=6,w=400)
 SliderEspaceFish = cmds.floatSliderGrp(field=True,label="Space between Fish",minValue=3,maxValue=6,value=3.5,w=400)
-SliderNbShoal = cmds.intSliderGrp(field=True,label="Shoal Amount",minValue=1,maxValue=10,value=3,w=400)
 
 cmds.separator(h=30, style="none")
 
-cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Choose Color",c="coloFish= Color()",bgc=[0.2,0.2,0.2],w=400)
 
-cmds.button(label="Shoal", c="count = repartirPoissons(count, couleurs, cmds.intSliderGrp(SliderNbShoal, q=True, value=True), cmds.intSliderGrp(SliderNbFish, q=True, value=True), cmds.radioButtonGrp(typeFish, q=True, select=True), cmds.floatSliderGrp(SliderEspaceFish, q=True, value=True), cmds.floatSliderGrp(SliderScaleFishy, q=True, value=True))",h=40,w=400)
+cmds.button(label="Shoal", c="listePoissons = repartirPoissons(cmds.intSliderGrp(SliderNbFish, q=True, value=True), cmds.radioButtonGrp(typeFish, q=True, select=True), cmds.floatSliderGrp(SliderEspaceFish, q=True, value=True), cmds.floatSliderGrp(SliderScaleFishy, q=True, value=True),coloFish)",h=40,w=400)
 
 cmds.separator(h=30, style="none")
 cmds.separator(h=10,w=400)
@@ -444,9 +474,9 @@ algae_number = cmds.intSliderGrp(field=True,label="Numbers",minValue=0,maxValue=
 algae_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
 cmds.separator(h=20, style="none")
 
-cmds.button(label="Choose Color",c="couleurs = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Choose Color",c="coloAlgae = Color()",bgc=[0.2,0.2,0.2],w=400)
 
-cmds.button(label="Algae", c="repartirAlgues(cmds.intSliderGrp(algae_number, q=True, value=True),cmds.floatSliderGrp(algae_rotate, q=True, value=True), couleurs)",h=40,w=400)
+cmds.button(label="Algae", c="repartirAlgues(cmds.intSliderGrp(algae_number, q=True, value=True),cmds.floatSliderGrp(algae_rotate, q=True, value=True), coloAlgae)",h=40,w=400)
 
 cmds.setParent( '..' )
 
@@ -457,7 +487,7 @@ cmds.setParent( '..' )
 child4 = cmds.scrollLayout(w=400)
 
 cmds.separator(h=30, style="none")
-cmds.text(label="Animate your scene.", font='boldLabelFont',h=20,w=400)
+cmds.text(label="Animate your corals.", font='boldLabelFont',h=20,w=400)
 cmds.separator(h=30, style="none")
 
 vague_amplitude = cmds.floatSliderGrp(field=True, label='Amplitude', minValue=0.0, maxValue=1.0, value=0.3, step=0.05, w=400)
@@ -466,9 +496,24 @@ vague_lenteur = cmds.floatSliderGrp(field=True, label='Lenteur', minValue=0.0, m
 
 cmds.separator(h=3, style="none")
 
-cmds.button(label="Waves", c="boutonAnimerVagues(grpAnimVague, cmds.floatSliderGrp(vague_amplitude, q=True, value=True), cmds.floatSliderGrp(vague_wavelength, q=True, value=True), cmds.floatSliderGrp(vague_lenteur, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Waves ! ", c="boutonAnimerVagues(grpAnimVague, cmds.floatSliderGrp(vague_amplitude, q=True, value=True), cmds.floatSliderGrp(vague_wavelength, q=True, value=True), cmds.floatSliderGrp(vague_lenteur, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
+
+
+cmds.separator(h=30, style="none")
+cmds.text(label="Animate your fishes.", font='boldLabelFont',h=20,w=400)
+cmds.separator(h=30, style="none")
+
+anim_duration = cmds.intSliderGrp(field=True, label='Duration', minValue=5, maxValue=300, value=150, step=10, w=400)
+
+cmds.separator(h=3, style="none")
+
+cmds.button(label="Swim !", c="lancerSimulation(listePoissons, cmds.intSliderGrp(anim_duration, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
+
 
 cmds.setParent( '..' )
+
+
+
 
 #////////////////////// TAB5 //////////////////////
 child5 = cmds.scrollLayout(w=400)
@@ -573,4 +618,5 @@ cmds.formLayout( form, edit=True, attachForm=((view, 'left', 460)) )
 
 
 cmds.showWindow()
+
 

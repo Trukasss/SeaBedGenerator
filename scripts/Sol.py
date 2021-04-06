@@ -3,7 +3,7 @@ import maya.cmds as cmds
 
 #cmds.file(f=True,new=True)
 
-def Fond(colors, Stre, Freq, Ampl):
+def Fond(Stre, Freq, Ampl, colors={222,202,163}):
     cmds.file(f=True,new=True)
 
     # Stre=cmds.floatSliderGrp(field_strenth,q=True,v=True)
@@ -39,11 +39,11 @@ def Fond(colors, Stre, Freq, Ampl):
     cmds.connectAttr( n+".outColor", td[0]+".texture", force=True)
     
     
-    #Color = cmds.shadingNode('aiStandardSurface', name="colo", asShader=True)
-    #cmds.setAttr(Color+".baseColor", colors[0], colors[0],  colors[0])
+    Color = cmds.shadingNode('aiStandardSurface', name="colo", asShader=True)
+    cmds.setAttr(Color+".baseColor", colors[0], colors[1],  colors[2])
         
-    #cmds.select("fond",  hi=True, add=True)
-    #cmds.hyperShade(assign=Color)
+    cmds.select("fond",  hi=True, add=True)
+    cmds.hyperShade(assign=Color)
 
 
 
