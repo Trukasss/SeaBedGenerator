@@ -49,7 +49,7 @@ class poissonBoid:
 
     rayCoh = 15 #Rayon a partir du quel les poissons font la COHESION   6
     rayAli = 10 #Rayon a partir du quel les poissons font la ALIGNEMENT 3
-    raySep = 5 #Rayon a partir du quel les poissons font la SEPARATION  0.1
+    raySep = 4 #Rayon a partir du quel les poissons font la SEPARATION  0.1 5
 
     vitNag = -0.5 #Vitesse (en unite maya), d'avancement du poisson
     puiCoh = 0.0 #/!\ Laisser a 0 #Puissance d'orientation (% de 0 a 1), vers le centre des voisins
@@ -221,30 +221,36 @@ class poissonBoid:
 #--------------------------------------------------Scene--------------------------------------------------
 cmds.file(new=True, f=True)
 
-def creerPoissons(nb, espacementFish, typeFish, scaleFish):
-    p = []
-    posYgroup = random.uniform(4,8)
+def creerPoissons(nb, typeFish, scaleFish):
+    p=[]
+    posYgroup = random.uniform(4,8) #hauteur random
     posXgroup = random.uniform(-7,7) #diamètre du sol / 2.0
     posZgroup = random.uniform(-7,7) #diamètre du sol / 2.0
+    rotXgroup = random.uniform(-15,15) #rotateX groupe
+    rotYgroup = random.uniform(-180,180) #rotateY group
     for i in range(0, nb):
-        p.append( poissonBoid(typeFish, scaleFish, "petitPoisson_" +str(i)) ) #création d'instance de classe
+        p.append(poissonBoid(typeFish, scaleFish, "petitPoisson_" +str(i))) #création d'instance de classe
         
         #générer les coordonnées des fishfish
-        posX = random.uniform(-espacementFish/2.0, espacementFish/2.0) + posXgroup
-        posY = random.uniform(-espacementFish/2.0, espacementFish/2.0) + posYgroup
-        posZ = random.uniform(-espacementFish/2.0, espacementFish/2.0) + posZgroup
+        posX = random.uniform(-2, 2) + posXgroup
+        posY = random.uniform(-2, 2) + posYgroup
+        posZ = random.uniform(-2, 2) + posZgroup
+        #générer la rotate des fishyfishy 
+        rX= random.uniform(-20,20) + rotXgroup
+        rY= random.uniform(-20,20) + rotYgroup
         print(posX, posY, posZ)
         #placement d'un petit poisson 
-        poissonBoid.placer(p[i], posX, posY, posZ, 0, 0, 0) #random.uniform(-10,10) c'est assez chelou 
+        poissonBoid.placer(p[i], posX, posY, posZ, rX, rY, 0)
     return p
 
 def lancerSimulation(rPoissons, duree):
+    print("lancerSimulation Liste = ")
     print(rPoissons)
-    print("okok")
+   
     for i in range(1, duree+1):
         cmds.currentTime(i)
         for p in rPoissons:
-            cmds.setKeyframe(p.rBoid, at=["tx", "ty", "tz", "rx", "ry", "rz"], t=i)
+            cmds.setKeyframe(p.rBoid, at=["tx", "ty", "tz", "rx", "ry", "rz"], t=i) #p.rBoid
             poissonBoid.simuler(p)
 
 def cleanerAnimation(rPoissons):
@@ -260,10 +266,17 @@ def cleanerAnimation(rPoissons):
         courbesACleaner.append(nom +".blendAim1")
     cmds.filterCurve(courbesACleaner, f="butterworth", cutoffFrequency = 1.5, samplingRate=24, keepKeysOnFrame=True)
 
+#grpAnimFish=[]
 #cmds.autoKeyframe(state=True)
-#rPoissons = creerPoissons(10,3, 1, 0.8)
-#lancerSimulation(rPoissons, 100)
-#cleanerAnimation(rPoissons)
+#rPoissons = creerPoissons(10, 1, 0.8)
+#grpAnimFish = grpAnimFish + rPoissons
+#rPoissons = creerPoissons(5, 2, 0.8)
+#grpAnimFish = grpAnimFish + rPoissons
+#print(rPoissons)
+#print(grpAnimFish)
+#lancerSimulation(grpAnimFish, 100)
+#cleanerAnimation(grpAnimFish)
+
 
 # p1 = poissonBoid("poissonTest")
 # p2 = poissonBoid("poissonTesteuuuuh")

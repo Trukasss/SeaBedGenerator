@@ -24,7 +24,8 @@ from SeaBedGenerator.scripts.RepartitionCode import Repartition
 from SeaBedGenerator.scripts.Sol import Fond
 from SeaBedGenerator.scripts.fish import shoal
 from SeaBedGenerator.scripts.Algues import dessAlgue, colorierAlgue
-from SeaBedGenerator.scripts.Animation import boutonAnimerVagues
+from SeaBedGenerator.scripts.Animation import boutonAnimerVagues, creerPoissons, lancerSimulation, cleanerAnimation
+
 
 cmds.file(f=True, new=True)
 
@@ -33,15 +34,18 @@ pathVignettes = cmds.internalVar(usd=True)+"SeaBedGenerator/Vignettes/"
 pathImport= cmds.internalVar(usd=True)+"SeaBedGenerator/Models/"
 grpAnimVague = []
 
-coloGround={222,202,163}
-coloRocks={177,81,81}
-coloShells={131,206,196}
-coloUrchins={37,44,101}
-coloStarfish={224,156,89}
-coloCoral1 = {177,71,113}
-coloCoral2 = {89,111,172}
-coloFish = {145,111,158}
-coloAlgae = {25,117,113}
+instanceList = []
+grpAnimFish = []
+
+coloGround=[222,202,163]
+coloRocks=[177,81,81]
+coloShells=[131,206,196]
+coloUrchins=[37,44,101]
+coloStarfish=[224,156,89]
+coloCoral1 = [177,71,113]
+coloCoral2 = [89,111,172]
+coloFish = [145,111,158]
+coloAlgae = [25,117,113]
 
 #__________________ import __________________
 #param = le nom du FBX
@@ -51,7 +55,7 @@ def setImport(nomAsset):
 
 
 # __________________ FONCTIONS pour importer elements + appeler la repartition des elements __________________
-def repartirRochers(nb, rotation, scale_min, scale_max, colo={177,81,81}):
+def repartirRochers(nb, rotation, scale_min, scale_max, colo=[177,81,81]):
     if cmds.objExists("Rocher*"):
         cmds.delete("Rocher*")
     #-----import des rochers
@@ -80,7 +84,7 @@ def repartirRochers(nb, rotation, scale_min, scale_max, colo={177,81,81}):
     ApplyColor("Rocher", colo, 0)
 
 
-def repartirCoquillages(nb, rotation, scale_min, scale_max, colo={131,206,196}):
+def repartirCoquillages(nb, rotation, scale_min, scale_max, colo=[131,206,196]):
     if cmds.objExists("Coquillage*"):
         cmds.delete("Coquillage*")
 
@@ -94,7 +98,7 @@ def repartirCoquillages(nb, rotation, scale_min, scale_max, colo={131,206,196}):
     ApplyColor("Coquillage", colo, 0)
 
 
-def repartirOursins(nb, rotation,scale_min,scale_max, colo={37,44,101}):
+def repartirOursins(nb, rotation,scale_min,scale_max, colo=[37,44,101]):
     if cmds.objExists("Oursin*"):
         cmds.delete("Oursin*")
         #cmds.delete("grOursin*")
@@ -108,7 +112,7 @@ def repartirOursins(nb, rotation,scale_min,scale_max, colo={37,44,101}):
     ApplyColor("Oursin", colo, 0)
 
 
-def repartirEtoiles(nb, rotation, scale_min, scale_max, colo={224,156,89}):
+def repartirEtoiles(nb, rotation, scale_min, scale_max, colo=[224,156,89]):
     if cmds.objExists("EtoileDeMer*"):
         cmds.delete("EtoileDeMer*")
     #-----import du mesh etoiles
@@ -120,7 +124,7 @@ def repartirEtoiles(nb, rotation, scale_min, scale_max, colo={224,156,89}):
     ApplyColor("EtoileDeMer", colo, 0.4)
 
 
-def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo={177,71,113}):
+def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo=[177,71,113]):
     if cmds.objExists("CorailCone*"):
         cmds.delete("CorailCone*")
 
@@ -151,7 +155,7 @@ def repartirCorauxCone(nb, rotation, scale_min, scale_max, colo={177,71,113}):
     ApplyColor("CorailCone", colo, 0.2)
 
 
-def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo={89,111,172}):
+def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo=[89,111,172]):
     if cmds.objExists("CorailPhone*"):
         cmds.delete("CorailPhone*")
     #-----import des mesh coraux phone
@@ -177,7 +181,7 @@ def repartirCorauxPhone(nb, rotation, scale_min, scale_max, colo={89,111,172}):
     ApplyColor("CorailPhone", colo, 0.2)
 
 
-def repartirPoissons(nbFish, typeFishRadio, espacementFish, scaleFish, colo ={145,111,158}):
+def repartirPoissons(nbFish, typeFishRadio, scaleFish,instanceListPoissons, colo):
     #// définir le nom du type de poisson
     if (typeFishRadio== 2): # = le poisson long
         nomType = "PoissonLong"
@@ -185,13 +189,14 @@ def repartirPoissons(nbFish, typeFishRadio, espacementFish, scaleFish, colo ={14
         nomType = "PoissonFleche"
     
     #shoal(colo, nbFish, espacementFish, scaleFish, nomType)
+    print(instanceListPoissons)
+    rPoissons = creerPoissons(nbFish, typeFishRadio, scaleFish)
+    for p in rPoissons:
+        instanceListPoissons.append(p)
     
-    cmds.autoKeyframe(state=True)
-    rPoissons = creerPoissons(nbFish,espacementFish,typeFishRadio, scaleFish)
-
+    
     #/// Colo spécifique du poisson 
     #--- definition du nom du type de poisson a instancier ---
-    '''
     Nag = cmds.shadingNode('aiStandardSurface', name="na", asShader=True)
     cmds.setAttr(Nag+".baseColor", 0.87059,0.79216,0.63922)
     cmds.setAttr(Nag+".specularRoughness", 0.8)
@@ -210,13 +215,14 @@ def repartirPoissons(nbFish, typeFishRadio, espacementFish, scaleFish, colo ={14
     cmds.select(clear=True)
     cmds.select(nomType+"*|"+nomType+"_nageoires*",  hi=True, add=True) 
     cmds.hyperShade(assign=Body)
-    '''
-    return rPoissons
+    
+    print(instanceListPoissons)
+    return instanceListPoissons
     
 
 
 
-def repartirAlgues(nb, rotation, colo= {25,117,113}):
+def repartirAlgues(nb, rotation, colo= [25,117,113]):
     gAlgue = dessAlgue(
         cmds.radioButtonGrp(UIembout, q=True, select=True),
         cmds.floatSliderGrp(UIpuissance, q=True, value=True),
@@ -237,7 +243,12 @@ def repartirAlgues(nb, rotation, colo= {25,117,113}):
         grpAnimVague.append(Repartition(gAlgue,'fond', 1, rotation, 0.05, 0.05, False))
     #cmds.delete(gAlgue)
 
-
+def boutonAnimerFishyFish(listePoissonAnim, duration):
+    cmds.autoKeyframe(state=True)
+    print("boutonAnimerPoisson Liste = ")
+    print(listePoissonAnim)
+    lancerSimulation(listePoissonAnim,duration)
+    cleanerAnimation(listePoissonAnim)
 #__________________________coloration _______________________________________
 def ApplyColor(nom, colo, emission):
     mat = cmds.shadingNode('aiStandardSurface', name=nom+"Mat", asShader=True)
@@ -417,13 +428,13 @@ cmds.separator(h=20, style="none")
 typeFish = cmds.radioButtonGrp(numberOfRadioButtons=2, label='Type of fish', labelArray2=['Arrow One', 'Long One'], select=2)
 SliderScaleFishy = cmds.floatSliderGrp(field=True,label="Fish Scale",minValue=0.2,maxValue=1,value=0.5,w=400)
 SliderNbFish = cmds.intSliderGrp(field=True,label="Fish per Shoal",minValue=4,maxValue=20,value=6,w=400)
-SliderEspaceFish = cmds.floatSliderGrp(field=True,label="Space between Fish",minValue=3,maxValue=6,value=3.5,w=400)
+#SliderEspaceFish = cmds.floatSliderGrp(field=True,label="Space between Fish",minValue=3,maxValue=6,value=3.5,w=400)
 
 cmds.separator(h=30, style="none")
 
 cmds.button(label="Choose Color",c="coloFish= Color()",bgc=[0.2,0.2,0.2],w=400)
 
-cmds.button(label="Shoal", c="listePoissons = repartirPoissons(cmds.intSliderGrp(SliderNbFish, q=True, value=True), cmds.radioButtonGrp(typeFish, q=True, select=True), cmds.floatSliderGrp(SliderEspaceFish, q=True, value=True), cmds.floatSliderGrp(SliderScaleFishy, q=True, value=True),coloFish)",h=40,w=400)
+cmds.button(label="Shoal", c="grpAnimFish  = repartirPoissons(cmds.intSliderGrp(SliderNbFish, q=True, value=True), cmds.radioButtonGrp(typeFish, q=True, select=True), cmds.floatSliderGrp(SliderScaleFishy, q=True, value=True),instanceList, coloFish)",h=40,w=400)
 
 cmds.separator(h=30, style="none")
 cmds.separator(h=10,w=400)
@@ -503,11 +514,11 @@ cmds.separator(h=30, style="none")
 cmds.text(label="Animate your fishes.", font='boldLabelFont',h=20,w=400)
 cmds.separator(h=30, style="none")
 
-anim_duration = cmds.intSliderGrp(field=True, label='Duration', minValue=5, maxValue=300, value=150, step=10, w=400)
+anim_duration = cmds.intSliderGrp(field=True, label='Duration', minValue=5, maxValue=300, value=80, step=10, w=400)
 
 cmds.separator(h=3, style="none")
 
-cmds.button(label="Swim !", c="lancerSimulation(listePoissons, cmds.intSliderGrp(anim_duration, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Swim !", c="boutonAnimerFishyFish(grpAnimFish, cmds.intSliderGrp(anim_duration, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
 
 
 cmds.setParent( '..' )
@@ -612,7 +623,7 @@ def RenderView() :
 cmds.tabLayout( tabs, edit=True, tabLabel=((child1, "Field / Details"), (child2, "Starfish / Corals"), (child3, "Fish / Algae"), (child4, "Animation"), (child5, "Render")) )
 cmds.setParent( '..' )
 view=cmds.paneLayout(w=1450,h=1080)
-cmds.modelPanel(mbv=0)
+cmds.modelEditor(displayAppearance='smoothShaded')
 cmds.formLayout( form, edit=True, attachForm=((view, 'left', 460)) )
 
 
