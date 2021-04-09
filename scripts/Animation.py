@@ -47,18 +47,33 @@ class poissonBoid:
     rBoid = "temp" #Reference du mesh (objet maya) dans la scene
     listeBoids = [] #Liste de tous les objets de cette classe
 
-    rayCoh = 15 #Rayon a partir du quel les poissons font la COHESION
-    rayAli = 10 #Rayon a partir du quel les poissons font la ALIGNEMENT
-    raySep = 5 #Rayon a partir du quel les poissons font la SEPARATION
+    rayCoh = 15 #Rayon a partir du quel les poissons font la COHESION   6
+    rayAli = 10 #Rayon a partir du quel les poissons font la ALIGNEMENT 3
+    raySep = 4 #Rayon a partir du quel les poissons font la SEPARATION  0.1 5
 
-    vitNag = 0.5 #Vitesse (en unite maya), d'avancement du poisson
+    vitNag = -0.5 #Vitesse (en unite maya), d'avancement du poisson
     puiCoh = 0.0 #/!\ Laisser a 0 #Puissance d'orientation (% de 0 a 1), vers le centre des voisins
     accCoh = 0.01 #Pourcentage d'augmentation de la puissance d'orientation vers ce centre
     accSep = 0.02 #Pourcentage de reduction de la puissance d'orientation vers ce centre (peut aller dans le negatif)
     accAli = 10 #Angle de rotation pour l'alignement d'orientation
 
-    def __init__(self, nom="boid"):
-        self.rBoid = cmds.polyCone(n=nom, axis=(0,1,0))
+    def __init__(self, typeFish, scaleFish = 0.5, nom="boid"):
+        #changer les mesh   
+        if(typeFish == 2):
+            nameType = "PoissonLong"
+            path = cmds.internalVar(usd=True)+"SeaBedGenerator/Models/PoissonLong.fbx"
+            cmds.file(path, i=True, mergeNamespacesOnClash=True, namespace=':')
+            self.rBoid = cmds.instance(nameType , leaf=True) 
+            cmds.scale(scaleFish, scaleFish, scaleFish, self.rBoid)
+            cmds.delete(nameType)
+        if (typeFish == 1):
+            nameType = "PoissonFleche"
+            path = cmds.internalVar(usd=True)+"SeaBedGenerator/Models/PoissonFleche.fbx"
+            cmds.file(path, i=True, mergeNamespacesOnClash=True, namespace=':')
+            self.rBoid = cmds.instance(nameType, leaf=True)
+            cmds.scale(scaleFish, scaleFish, scaleFish, self.rBoid)
+            cmds.delete(nameType)
+        
         self.listeBoids.append(self.rBoid)
 
     #(FONCTION METHODES JSP MATHS)
@@ -130,7 +145,7 @@ class poissonBoid:
 
     # (MOUVEMENT BASE)
     def nager(self):
-        cmds.move(0, self.vitNag, 0, self.rBoid, r=True, os=True)
+        cmds.move(0, 0, self.vitNag, self.rBoid, r=True, os=True) #changer vitNag de l'axe Y à l'axe Z
 
     # (BOID:COHESION)
     def boidCohSep(self):#, pA, pB, dis, vecNormAB, vit=1.0, disTol=30.0):
@@ -164,12 +179,12 @@ class poissonBoid:
             cmds.setAttr(self.rBoid[0] +".blendAim1", self.puiCoh)
             cmds.setKeyframe(self.rBoid, at=".blendAim1")
         #SEUL
-        # else:
-        #     self.puiCoh = 0
-        #     if (cmds.objExists(nomLoc)):
-        #         cmds.delete(nomLoc)
-        #     if (cmds.objExists(nomCon)):
-        #         cmds.delete(nomCon)
+        else:
+            self.puiCoh = 0
+            if (cmds.objExists(nomLoc)):
+                cmds.delete(nomLoc)
+            if (cmds.objExists(nomCon)):
+                cmds.delete(nomCon)
 
 
 
@@ -203,19 +218,39 @@ class poissonBoid:
         self.boidCohSep()
 
 
-#--------------------------------------------------FONCTIONS POUR INTERFACE--------------------------------------------------
-def creerPoissons(nb):
-    p = []
+#--------------------------------------------------Scene--------------------------------------------------
+cmds.file(new=True, f=True)
+
+def creerPoissons(nb, typeFish, scaleFish):
+    p=[]
+    posYgroup = random.uniform(4,8) #hauteur random
+    posXgroup = random.uniform(-7,7) #diamètre du sol / 2.0
+    posZgroup = random.uniform(-7,7) #diamètre du sol / 2.0
+    rotXgroup = random.uniform(-15,15) #rotateX groupe
+    rotYgroup = random.uniform(-180,180) #rotateY group
     for i in range(0, nb):
-        p.append( poissonBoid("petitPoisson_" +str(i)) )
-        poissonBoid.placer(p[i], random.uniform(-10,10), random.uniform(-10,10), random.uniform(-10,10), 0, 0, 0)
+        p.append(poissonBoid(typeFish, scaleFish, "petitPoisson_" +str(i))) #création d'instance de classe
+        
+        #générer les coordonnées des fishfish
+        posX = random.uniform(-2, 2) + posXgroup
+        posY = random.uniform(-2, 2) + posYgroup
+        posZ = random.uniform(-2, 2) + posZgroup
+        #générer la rotate des fishyfishy 
+        rX= random.uniform(-20,20) + rotXgroup
+        rY= random.uniform(-20,20) + rotYgroup
+        print(posX, posY, posZ)
+        #placement d'un petit poisson 
+        poissonBoid.placer(p[i], posX, posY, posZ, rX, rY, 0)
     return p
 
 def lancerSimulation(rPoissons, duree):
+    print("lancerSimulation Liste = ")
+    print(rPoissons)
+   
     for i in range(1, duree+1):
         cmds.currentTime(i)
         for p in rPoissons:
-            cmds.setKeyframe(p.rBoid, at=["tx", "ty", "tz", "rx", "ry", "rz"], t=i)
+            cmds.setKeyframe(p.rBoid, at=["tx", "ty", "tz", "rx", "ry", "rz"], t=i) #p.rBoid
             poissonBoid.simuler(p)
 
 def cleanerAnimation(rPoissons):
@@ -231,13 +266,17 @@ def cleanerAnimation(rPoissons):
         courbesACleaner.append(nom +".blendAim1")
     cmds.filterCurve(courbesACleaner, f="butterworth", cutoffFrequency = 1.5, samplingRate=24, keepKeysOnFrame=True)
 
+#grpAnimFish=[]
+#cmds.autoKeyframe(state=True)
+#rPoissons = creerPoissons(10, 1, 0.8)
+#grpAnimFish = grpAnimFish + rPoissons
+#rPoissons = creerPoissons(5, 2, 0.8)
+#grpAnimFish = grpAnimFish + rPoissons
+#print(rPoissons)
+#print(grpAnimFish)
+#lancerSimulation(grpAnimFish, 100)
+#cleanerAnimation(grpAnimFish)
 
-#--------------------------------------------------SCENE TEST--------------------------------------------------
-# cmds.file(new=True, f=True)
-# cmds.autoKeyframe(state=True)
-# rPoissons = creerPoissons(5)
-# lancerSimulation(rPoissons, 100)
-# cleanerAnimation(rPoissons)
 
 # p1 = poissonBoid("poissonTest")
 # p2 = poissonBoid("poissonTesteuuuuh")
