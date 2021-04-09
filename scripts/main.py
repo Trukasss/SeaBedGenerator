@@ -37,6 +37,7 @@ grpAnimVague = []
 instanceList = []
 grpAnimFish = []
 
+#colo de base des items (bug car toujours blanc dans tout les cas )
 coloGround=[222,202,163]
 coloRocks=[177,81,81]
 coloShells=[131,206,196]

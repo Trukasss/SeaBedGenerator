@@ -250,7 +250,7 @@ def lancerSimulation(rPoissons, duree):
     for i in range(1, duree+1):
         cmds.currentTime(i)
         for p in rPoissons:
-            cmds.setKeyframe(p.rBoid, at=["tx", "ty", "tz", "rx", "ry", "rz"], t=i) #p.rBoid
+            cmds.setKeyframe(p.rBoid, at=["tx", "ty", "tz", "rx", "ry", "rz"], t=i) 
             poissonBoid.simuler(p)
 
 def cleanerAnimation(rPoissons):
