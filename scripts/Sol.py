@@ -40,6 +40,7 @@ def Fond(Stre, Freq, Ampl, colors={222,202,163}):
     
     
     Color = cmds.shadingNode('aiStandardSurface', name="colo", asShader=True)
+    cmds.setAttr("colo.specular",0)
     cmds.setAttr(Color+".baseColor", colors[0], colors[1],  colors[2])
         
     cmds.select("fond",  hi=True, add=True)
