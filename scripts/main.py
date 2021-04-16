@@ -279,14 +279,21 @@ cmds.formLayout( form, edit=True, attachForm=((tabs, 'left', 15)) )
 child1 = cmds.scrollLayout(w=300)
 
 #------Field-----#
+cmds.separator(h=15, style="none")
 cmds.text(label="Generate the field of your seabed.", font='boldLabelFont',h=50,align="center")
 
 field_strenth = cmds.floatSliderGrp(field=True,label="Strenth",minValue=0,maxValue=3,value=1.5,w=400)
 field_frequency = cmds.floatSliderGrp(field=True,label="Frequency",minValue=0,maxValue=1,value=0.3,w=400)
 field_amplitude = cmds.floatSliderGrp(field=True,label="Amplitude",minValue=0,maxValue=1,value=0.4,w=400)
-cmds.separator(h=10, style="none")
+cmds.separator(h=15, style="none")
 
-cmds.button(label="Choose Color",c="coloGround = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(200, 30) )
+cmds.text(label="Choose a Color ",align="center")
+Field = cmds.button(label="",c="coloGround = Color(Field)",bgc=[1,1,1],w=400)
+cmds.setParent( '..' )
+
+cmds.separator(h=5, style="none")
+
 cmds.button(label="Field",c="Fond(cmds.floatSliderGrp(field_strenth,q=True,v=True), cmds.floatSliderGrp(field_frequency,q=True,v=True), cmds.floatSliderGrp(field_amplitude,q=True,v=True), coloGround)", w=400,h=40,al="right")
 
 
@@ -303,9 +310,17 @@ rock_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=
 rock_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=1,value=1,w=400)
 rock_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=90,value=0,w=400)
 
-cmds.separator(h=10, style="none")
+cmds.separator(h=15, style="none")
 
-cmds.button(label="Choose Color",c="coloRocks = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(200, 30) )
+cmds.text(label="Choose a Color ",align="center")
+Rocks = cmds.button(label="",c="coloRocks = Color(Rocks)",bgc=[1,1,1],w=400)
+cmds.setParent( '..' )
+
+cmds.separator(h=5, style="none")
+
+
+
 cmds.button(label="Rocks", c="repartirRochers(cmds.intSliderGrp(rock_number, q=True, value=True),cmds.floatSliderGrp(rock_rotate, q=True, value=True),cmds.floatSliderGrp(rock_min, q=True, value=True),cmds.floatSliderGrp(rock_max, q=True, value=True), coloRocks)",h=40,w=400)
 
 
@@ -322,9 +337,15 @@ shell_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue
 shell_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=2,value=0.9,w=400)
 shell_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
 
-cmds.separator(h=10, style="none")
+cmds.separator(h=15, style="none")
 
-cmds.button(label="Choose Color",c="coloShells = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(200, 30) )
+cmds.text(label="Choose a Color ",align="center")
+Shells = cmds.button(label="",c="coloShells = Color(Shells)",bgc=[1,1,1],w=400)
+cmds.setParent( '..' )
+
+cmds.separator(h=5, style="none")
+
 cmds.button(label="Shells",c="repartirCoquillages(cmds.intSliderGrp(shell_number, q=True, value=True), cmds.floatSliderGrp(shell_rotate, q=True, value=True),cmds.floatSliderGrp(shell_min, q=True, value=True),cmds.floatSliderGrp(shell_max, q=True, value=True), coloShells)",h=40,w=400)
 
 
@@ -341,9 +362,13 @@ urchin_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValu
 urchin_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=2,value=0.9,w=400)
 urchin_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
 
-cmds.separator(h=10, style="none")
+cmds.separator(h=15, style="none")
+cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(200, 30) )
+cmds.text(label="Choose a Color ",align="center")
+Urchins = cmds.button(label="",c="coloUrchins = Color(Urchins)",bgc=[1,1,1],w=400)
+cmds.setParent( '..' )
+cmds.separator(h=5, style="none")
 
-cmds.button(label="Choose Color",c="coloUrchins = Color()",bgc=[0.2,0.2,0.2],w=400)
 cmds.button(label="Sea Urchin",c="repartirOursins(cmds.intSliderGrp(urchin_number, q=True, value=True),cmds.floatSliderGrp(urchin_rotate, q=True, value=True),cmds.floatSliderGrp(urchin_min, q=True, value=True),cmds.floatSliderGrp(urchin_max, q=True, value=True), coloUrchins)",h=40,w=400)
 
 cmds.setParent( '..' )
@@ -362,9 +387,15 @@ star_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=70
 star_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=2,value=0.9,w=400)
 star_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=2,value=1.2,w=400)
 star_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
-cmds.separator(h=10, style="none")
 
-cmds.button(label="Choose Color",c="coloStarfish = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.separator(h=15, style="none")
+cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(200, 30) )
+cmds.text(label="Choose a Color ",align="center")
+Stars = cmds.button(label="",c="coloStarfish = Color(Stars)",bgc=[1,1,1],w=400)
+cmds.setParent( '..' )
+cmds.separator(h=5, style="none")
+
+
 cmds.button(label="Starfish",c="repartirEtoiles(cmds.intSliderGrp(star_number, q=True, value=True),cmds.floatSliderGrp(star_rotate, q=True, value=True),cmds.floatSliderGrp(star_min, q=True, value=True),cmds.floatSliderGrp(star_max, q=True, value=True), coloStarfish)",h=40,w=400)
 
 
@@ -381,9 +412,13 @@ coral1_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValu
 coral1_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=1,value=1,w=400)
 coral_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
 
-cmds.separator(h=10, style="none")
+cmds.separator(h=15, style="none")
+cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(200, 30) )
+cmds.text(label="Choose a Color ",align="center")
+Coral1 = cmds.button(label="",c="coloCoral1 = Color(Coral1)",bgc=[1,1,1],w=400)
+cmds.setParent( '..' )
+cmds.separator(h=5, style="none")
 
-cmds.button(label="Choose Color",c="coloCoral1 = Color()",bgc=[0.2,0.2,0.2],w=400)
 cmds.button(label="Coral#1",c="repartirCorauxCone(cmds.intSliderGrp(coral_number, q=True, value=True),cmds.floatSliderGrp(coral_rotate, q=True, value=True), cmds.floatSliderGrp(coral1_min, q=True, value=True),cmds.floatSliderGrp(coral1_max, q=True, value=True), coloCoral1 )",h=40,w=400)
 
 #------Coral#2-----#
@@ -399,9 +434,13 @@ coral2_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValu
 coral2_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=1,value=0.8,w=400)
 coral2_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
 
-cmds.separator(h=10, style="none")
+cmds.separator(h=15, style="none")
+cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(200, 30) )
+cmds.text(label="Choose a Color ",align="center")
+Coral2 = cmds.button(label="",c="coloCoral2 = Color(Coral2)",bgc=[1,1,1],w=400)
+cmds.setParent( '..' )
+cmds.separator(h=5, style="none")
 
-cmds.button(label="Choose Color",c="coloCoral2 = Color()",bgc=[0.2,0.2,0.2],w=400)
 cmds.button(label="Coral#2",c="repartirCorauxPhone(cmds.intSliderGrp(coral2_number, q=True, value=True),cmds.floatSliderGrp(coral2_rotate, q=True, value=True),cmds.floatSliderGrp(coral2_min, q=True, value=True),cmds.floatSliderGrp(coral2_max, q=True, value=True),coloCoral2)",h=40,w=400)
 
 cmds.setParent( '..' )
@@ -418,7 +457,7 @@ cmds.text(label="Generate Shoal. ", font='boldLabelFont',h=50)
 cmds.separator(h=10, style="none")
 cmds.rowColumnLayout(numberOfColumns=2,cw=[(1,200),(2,200)])
 
-typeFishI=cmds.iconTextRadioCollection( 'fishCollection10' )
+typeFishI = cmds.iconTextRadioCollection( 'fishCollection10' )
 fleche=cmds.iconTextRadioButton( st='iconOnly', i1= pathVignettes +'PoissonFleche.png', l='fleche')
 long=cmds.iconTextRadioButton( st='iconOnly', i1= pathVignettes+'PoissonLong.png', l='long')
 
@@ -430,9 +469,12 @@ SliderScaleFishy = cmds.floatSliderGrp(field=True,label="Fish Scale",minValue=0.
 SliderNbFish = cmds.intSliderGrp(field=True,label="Fish per Shoal",minValue=4,maxValue=20,value=6,w=400)
 #SliderEspaceFish = cmds.floatSliderGrp(field=True,label="Space between Fish",minValue=3,maxValue=6,value=3.5,w=400)
 
-cmds.separator(h=30, style="none")
-
-cmds.button(label="Choose Color",c="coloFish= Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.separator(h=45, style="none")
+cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(200, 30) )
+cmds.text(label="Choose a Color ",align="center")
+Fish = cmds.button(label="",c="coloFish= Color(Fish)",bgc=[1,1,1],w=400)
+cmds.setParent( '..' )
+cmds.separator(h=5, style="none")
 
 cmds.button(label="Shoal", c="grpAnimFish  = repartirPoissons(cmds.intSliderGrp(SliderNbFish, q=True, value=True), cmds.radioButtonGrp(typeFish, q=True, select=True), cmds.floatSliderGrp(SliderScaleFishy, q=True, value=True),instanceList, coloFish)",h=40,w=400)
 
@@ -483,9 +525,15 @@ cmds.separator(h=20, style="none")
 
 algae_number = cmds.intSliderGrp(field=True,label="Numbers",minValue=0,maxValue=50,value=15,w=400)
 algae_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
-cmds.separator(h=20, style="none")
 
-cmds.button(label="Choose Color",c="coloAlgae = Color()",bgc=[0.2,0.2,0.2],w=400)
+cmds.separator(h=45, style="none")
+cmds.gridLayout( numberOfColumns=2, cellWidthHeight=(200, 30) )
+cmds.text(label="Choose a Color ",align="center")
+Algae = cmds.button(label="",c="coloAlgae = Color(Algae)",bgc=[1,1,1],w=400)
+cmds.setParent( '..' )
+cmds.separator(h=5, style="none")
+
+
 
 cmds.button(label="Algae", c="repartirAlgues(cmds.intSliderGrp(algae_number, q=True, value=True),cmds.floatSliderGrp(algae_rotate, q=True, value=True), coloAlgae)",h=40,w=400)
 
@@ -505,10 +553,12 @@ vague_amplitude = cmds.floatSliderGrp(field=True, label='Amplitude', minValue=0.
 vague_wavelength = cmds.floatSliderGrp(field=True, label='Frequence', minValue=0.0, maxValue=10.0, value=4.3, step=0.1, w=400)
 vague_lenteur = cmds.floatSliderGrp(field=True, label='Lenteur', minValue=0.0, maxValue=100, value=20, step=0.5, w=400)
 
-cmds.separator(h=3, style="none")
+cmds.separator(h=20, style="none")
 
-cmds.button(label="Waves ! ", c="boutonAnimerVagues(grpAnimVague, cmds.floatSliderGrp(vague_amplitude, q=True, value=True), cmds.floatSliderGrp(vague_wavelength, q=True, value=True), cmds.floatSliderGrp(vague_lenteur, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Waves ! ", c="boutonAnimerVagues(grpAnimVague, cmds.floatSliderGrp(vague_amplitude, q=True, value=True), cmds.floatSliderGrp(vague_wavelength, q=True, value=True), cmds.floatSliderGrp(vague_lenteur, q=True, value=True))", w=400,h=40)
 
+
+cmds.separator(h=20,w=400,style="none")
 
 cmds.separator(h=10,w=400)
 
@@ -518,11 +568,23 @@ cmds.separator(h=30, style="none")
 
 anim_duration = cmds.intSliderGrp(field=True, label='Duration', minValue=5, maxValue=300, value=80, step=10, w=400)
 
-cmds.separator(h=3, style="none")
+cmds.separator(h=20, style="none")
 
-cmds.button(label="Swim !", c="boutonAnimerFishyFish(grpAnimFish, cmds.intSliderGrp(anim_duration, q=True, value=True))", bgc=[0.2,0.2,0.2],w=400)
+cmds.button(label="Swim !", c="boutonAnimerFishyFish(grpAnimFish, cmds.intSliderGrp(anim_duration, q=True, value=True))",h=40,w=400)
 
 
+cmds.separator(h=50,w=400)
+cmds.separator(h=20, style="none")
+
+
+cmds.gridLayout(numberOfColumns=4, cellWidthHeight=(100, 100))
+
+cmds.text(label="")
+player = cmds.symbolButton( image= pathVignettes +"play.png",c="play()")
+pauser = cmds.symbolButton( image= pathVignettes +"pause.png",c="pause()" )
+cmds.text(label="")
+
+cmds.setParent( '..' )
 cmds.setParent( '..' )
 
 
@@ -532,13 +594,13 @@ cmds.setParent( '..' )
 child5 = cmds.scrollLayout(w=400)
 
 cmds.separator(h=30, style="none")
-cmds.text(label="Place a caustic light on your scene.", font='boldLabelFont',h=20,w=400)
+cmds.text(label="Place a caustic light in your scene.", font='boldLabelFont',h=20,w=400)
 cmds.separator(h=30, style="none")
 
 
 sliderExposure = cmds.floatSliderGrp(field=True,label="Exposure",minValue=0,maxValue=20,value=8,w=400)
-cmds.separator(h=10, style="none")
-cmds.button(label="Caustic Light", c="caustic_light(cmds.floatSliderGrp(sliderExposure,q=True,v=True))",w=400,h=50)
+cmds.separator(h=20, style="none")
+cmds.button(label="Caustic Light", c="caustic_light(cmds.floatSliderGrp(sliderExposure,q=True,v=True))",w=400,h=40)
 #cmds.separator(h=10, style="none")
 #cmds.button(label="Basic Light",c="SetupLighting()",bgc=[0.2,0.2,0.2],w=400,h=50)
 
@@ -551,6 +613,8 @@ cmds.separator(h=10,w=400)
 cmds.separator(h=30, style="none")
 cmds.text(label="Render your scene.", font='boldLabelFont',h=20,w=400)
 cmds.separator(h=30, style="none")
+
+
 cmds.button(label="Render",c="RenderView() ",w=400,h=100)
 
 
@@ -558,12 +622,31 @@ cmds.setParent( '..' )
 cmds.setParent( '..' )
 
 
-def Color():
+
+
+
+
+def play():
+    cmds.symbolButton(player,edit=True,enable=False)
+    cmds.play( forward=True )
+    cmds.symbolButton(pauser,edit=True,enable=True)
+    
+def pause():
+    cmds.symbolButton(pauser,edit=True,enable=False)
+    cmds.play( state=False )
+    cmds.symbolButton(player,edit=True,enable=True)
+    
+
+
+def Color(ButtonColor):
     couleurEditor=cmds.colorEditor()
     couleur = cmds.colorEditor(q=True, rgb=True)
     R=couleur[0]
     V=couleur[1]
     B=couleur[2]
+    
+    cmds.button(ButtonColor,edit=True,bgc=[couleur[0],couleur[1],couleur[2]],w=400)
+    
     return R,V,B
 
 

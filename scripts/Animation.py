@@ -6,6 +6,10 @@ import math
 import random
 
 
+# PAS TOUCHE #
+nb_Fleche = 0
+nb_Long = 0
+
 #_______________________ ANIMATION DEFORMEUR _______________________#
 
 #Fonction qui permet de creer un le deformeur wave avec deux parametres facultatifs ou de changer ces deux parametres si le deformeur existe deja.
@@ -57,6 +61,8 @@ class poissonBoid:
     accCoh = 0.01 #Pourcentage d'augmentation de la puissance d'orientation vers ce centre
     accSep = 0.02 #Pourcentage de reduction de la puissance d'orientation vers ce centre (peut aller dans le negatif)
     accAli = 10 #Angle de rotation pour l'alignement d'orientation
+    
+  
 
     def __init__(self, typeFish, scaleFish = 0.5, nom="boid"):
         #changer les mesh   
@@ -217,7 +223,36 @@ class poissonBoid:
         self.nager()
         self.boidAli()
         self.boidCohSep()
+        
+        #Test Wiggle
+    def wiggle(self,TypeFish,x):
+        
+        x=x+1
 
+        if (TypeFish==1):
+            cmds.select("PoissonFleche"+str(x),r=True)
+            nom = "PoissonFleche"
+          
+            
+        
+            
+        else:
+            cmds.select("PoissonLong"+str(x),r=True)
+            nom = "PoissonLong"
+            
+        
+        cmds.nonLinear( type="sine",n="houla_"+nom+str(x), amplitude=0.05)
+        
+        cmds.setAttr("houla_"+nom+str(x)+".wavelength",1.5)
+        cmds.rotate(90,0,0)
+        
+        cmds.expression(o="houla_"+nom+str(x), ae=True,uc=all, s= "houla_"+nom+str(x)+".off=time*4")
+        
+        cmds.parent("houla_"+nom+str(x)+"Handle",nom+str(x))
+        
+        
+        
+       
 
 #--------------------------------------------------Scene--------------------------------------------------
 cmds.file(new=True, f=True)
@@ -229,8 +264,15 @@ def creerPoissons(nb, typeFish, scaleFish):
     posZgroup = random.uniform(-7,7) #diamètre du sol / 2.0
     rotXgroup = random.uniform(-15,15) #rotateX groupe
     rotYgroup = random.uniform(-180,180) #rotateY group
+    
+    global nb_Fleche
+    global nb_Long
+   
+            
     for i in range(0, nb):
         p.append(poissonBoid(typeFish, scaleFish, "petitPoisson_" +str(i))) #création d'instance de classe
+        
+        poissonBoid.wiggle(p[i],typeFish,i)
         
         #générer les coordonnées des fishfish
         posX = random.uniform(-2, 2) + posXgroup
@@ -242,7 +284,17 @@ def creerPoissons(nb, typeFish, scaleFish):
         print(posX, posY, posZ)
         #placement d'un petit poisson 
         poissonBoid.placer(p[i], posX, posY, posZ, rX, rY, 0)
+     
+    ''' 
+    if (typeFish==1):
+      nb_Fleche=nb_Fleche+nb
+    else :
+        nb_Long=nb_Long + nb'''
+        
+        
     return p
+    
+
 
 def lancerSimulation(rPoissons, duree):
     print("lancerSimulation Liste = ")
@@ -267,17 +319,20 @@ def cleanerAnimation(rPoissons):
         courbesACleaner.append(nom +".blendAim1")
     cmds.filterCurve(courbesACleaner, f="butterworth", cutoffFrequency = 1.5, samplingRate=24, keepKeysOnFrame=True)
 
-#grpAnimFish=[]
-#cmds.autoKeyframe(state=True)
-#rPoissons = creerPoissons(10, 1, 0.8)
-#grpAnimFish = grpAnimFish + rPoissons
-#rPoissons = creerPoissons(5, 2, 0.8)
-#grpAnimFish = grpAnimFish + rPoissons
-#print(rPoissons)
-#print(grpAnimFish)
+'''
+grpAnimFish=[]
+cmds.autoKeyframe(state=True)
+rPoissons = creerPoissons(10, 1, 0.8)
+grpAnimFish = grpAnimFish + rPoissons
+rPoissons = creerPoissons(5, 2, 0.8)
+grpAnimFish = grpAnimFish + rPoissons
+print(rPoissons)
+print(grpAnimFish)
 #lancerSimulation(grpAnimFish, 100)
 #cleanerAnimation(grpAnimFish)
 
 
-# p1 = poissonBoid("poissonTest")
-# p2 = poissonBoid("poissonTesteuuuuh")
+p1 = poissonBoid("poissonTest")
+p2 = poissonBoid("poissonTesteuuuuh")'''
+
+

@@ -27,6 +27,8 @@ def shoal(colo, nbFish, espacementFish, scaleFish, nomType):
        f = cmds.instance(nomType, leaf=True)
        cmds.parent( f, grFish)
        
+    
+       
     #------------ REPARTITION ici -------------------
     randomY = rand.uniform(4,8) #?gerer la hauteur
     cmds.move(rand.uniform(-lar/2,lar/2),randomY,rand.uniform(-long/2,long/2), grFish) #repartition dans l'espace sur un plan
