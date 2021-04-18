@@ -240,7 +240,7 @@ def repartirAlgues(nb, rotation, colo= [25,117,113]):
     print("groupe algue = " +str(gAlgue))
 
     for i in range (0,nb):
-        grpAnimVague.append(Repartition(gAlgue,'fond', 1, rotation, 0.05, 0.05, False))
+        grpAnimVague.append(Repartition(gAlgue,'fond', nb, rotation, 0.02, 0.05))
     #cmds.delete(gAlgue)
 
 def boutonAnimerFishyFish(listePoissonAnim, duration):
@@ -306,8 +306,8 @@ cmds.image(image= pathVignettes+"Rochers.png")
 cmds.separator(h=20, style="none")
 
 rock_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=10,value=4,w=400)
-rock_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=1,value=1,w=400)
-rock_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=1,value=1,w=400)
+rock_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=1,value=0.2,w=400)
+rock_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=1,value=0.6,w=400)
 rock_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=90,value=0,w=400)
 
 cmds.separator(h=15, style="none")
@@ -333,8 +333,8 @@ cmds.image(image= pathVignettes + "Coquillage.png")
 cmds.separator(h=20, style="none")
 
 shell_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=50,value=15,w=400)
-shell_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=2,value=0.7,w=400)
-shell_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=2,value=0.9,w=400)
+shell_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=2,value=0.2,w=400)
+shell_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=2,value=0.7,w=400)
 shell_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
 
 cmds.separator(h=15, style="none")
@@ -358,8 +358,8 @@ cmds.image(image= pathVignettes + "Oursin.png")
 cmds.separator(h=20, style="none")
 
 urchin_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=50,value=15,w=400)
-urchin_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=2,value=0.7,w=400)
-urchin_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=2,value=0.9,w=400)
+urchin_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=2,value=0.1,w=400)
+urchin_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=2,value=0.5,w=400)
 urchin_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
 
 cmds.separator(h=15, style="none")
@@ -384,8 +384,8 @@ cmds.image(image= pathVignettes + "EtoileDeMer.png")
 cmds.separator(h=20, style="none")
 
 star_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=70,value=5,w=400)
-star_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=2,value=0.9,w=400)
-star_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=2,value=1.2,w=400)
+star_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=2,value=0.2,w=400)
+star_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=2,value=0.5,w=400)
 star_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
 
 cmds.separator(h=15, style="none")
@@ -408,8 +408,8 @@ cmds.image(image= pathVignettes + "Coraux1.png")
 cmds.separator(h=20, style="none")
 
 coral_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=20,value=6,w=400)
-coral1_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=1,value=0.7,w=400)
-coral1_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=1,value=1,w=400)
+coral1_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=1,value=0.4,w=400)
+coral1_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=1,value=0.7,w=400)
 coral_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
 
 cmds.separator(h=15, style="none")
@@ -430,8 +430,8 @@ cmds.image(image= pathVignettes + "Coraux2.png")
 cmds.separator(h=20, style="none")
 
 coral2_number = cmds.intSliderGrp(field=True,label="Amount",minValue=0,maxValue=20,value=6,w=400)
-coral2_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=1,value=0.5,w=400)
-coral2_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=1,value=0.8,w=400)
+coral2_min = cmds.floatSliderGrp(field=True,label="Min Scale",minValue=0,maxValue=1,value=0.3,w=400)
+coral2_max = cmds.floatSliderGrp(field=True,label="Max Scale",minValue=0,maxValue=1,value=0.6,w=400)
 coral2_rotate = cmds.floatSliderGrp(field=True,label="Rotation",minValue=0,maxValue=180,value=0,w=400)
 
 cmds.separator(h=15, style="none")
