@@ -66,7 +66,7 @@ def Repartition(obj, target, quantity, rotation, scale_min, scale_max):
         cmds.aimConstraint(offset = (0, 0, 0), weight = 1, aimVector = (0, 1, 0), worldUpType = "vector", worldUpVector = (0, 1, 0))
         
         
-        cmds.parent(obji, g)
+        cmds.parent(obji[0], g)
         cmds.parent(l, gL)
         cmds.select("grLocators")
         #cmds.hide()
@@ -78,8 +78,11 @@ def Repartition(obj, target, quantity, rotation, scale_min, scale_max):
     cmds.delete("grLocators") #*|*"
     cmds.delete(obj)
     
-    
-    # ------- Delete empty group ------- 
+    return g
+ 
+'''   
+# ------- Delete empty group ------- 
+def deleteEmpty():
     transforms =  cmds.ls(type = "transform")
     deleteList = []
     
@@ -92,7 +95,7 @@ def Repartition(obj, target, quantity, rotation, scale_min, scale_max):
      
     if len(deleteList) > 0:
        cmds.delete(deleteList)
-
+'''
 
 # ------------------ CLEAN SCENE ------------------ 
  

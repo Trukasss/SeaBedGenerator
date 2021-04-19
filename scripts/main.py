@@ -718,6 +718,22 @@ def RenderView() :
     cmds.arnoldRenderView(mode ="open")
     cmds.arnoldRenderView()
     
+    # -------- Delete Empty Group
+    transforms =  cmds.ls(type = "transform")
+    deleteList = []
+    
+    for grp in transforms:
+        if cmds.nodeType(grp) == "transform":
+            children = cmds.listRelatives(grp, c = True)
+            if children == None:
+                print "%s, had no children and was deleted" %(grp)
+                deleteList.append(grp)
+     
+    if len(deleteList) > 0:
+       cmds.delete(deleteList)
+    
+    
+    
 def caustic_light(e):
     
    # Creation Spot Light #
